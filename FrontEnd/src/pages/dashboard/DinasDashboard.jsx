@@ -1,13 +1,11 @@
 import { Outlet } from "react-router-dom";
 
-import DashboardLayout from "../../layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
 function DinasDashboard() {
   return (
     <DashboardLayout>
-
       <Outlet />
-
     </DashboardLayout>
   );
 }

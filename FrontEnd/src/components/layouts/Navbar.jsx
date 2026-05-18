@@ -1,276 +1,194 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import {
-  Bell,
-  ChevronDown,
-  LogOut,
-  Menu,
-  Search,
-  Settings,
-  School,
-  HandCoins,
-  CircleCheckBig,
-  User,
-} from "lucide-react";
+import { Bell, LogOut, Menu, Search, Settings, User } from "lucide-react";
 
-const notifications = [
-  {
-    title: "SD Negeri 01 Coblong mengirim data baru",
-    time: "2 menit lalu",
-    icon: School,
-    color: "bg-blue-100 text-blue-700",
-  },
-  {
-    title: "CSR PT Maju Jaya mengajukan bantuan",
-    time: "15 menit lalu",
-    icon: HandCoins,
-    color: "bg-green-100 text-green-700",
-  },
-  {
-    title: "Verifikasi data SMPN 5 berhasil",
-    time: "1 jam lalu",
-    icon: CircleCheckBig,
-    color: "bg-emerald-100 text-emerald-700",
-  },
-];
+import { useNavigate } from "react-router-dom";
 
-export default function Navbar() {
-  const [openNotif, setOpenNotif] = useState(false);
-  const [openProfile, setOpenProfile] = useState(false);
+import { useAuth } from "../../context/AuthContext";
+
+export default function Navbar({ setSidebarOpen }) {
+  const navigate = useNavigate();
+
+  const { user, logout } = useAuth();
+
+  const [showNotif, setShowNotif] = useState(false);
+
+  const [showProfile, setShowProfile] = useState(false);
+
+  const notifRef = useRef(null);
+
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setShowNotif(false);
+      }
+
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowProfile(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+
+    navigate("/login");
+  };
 
   return (
-    <header className="sticky top-0 z-40 flex h-[72px] items-center justify-between border-b border-slate-200 bg-white px-4 md:px-8">
-
-      {/* LEFT */}
-      <div className="flex items-center gap-4">
-
-        {/* Mobile Menu */}
-        <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white lg:hidden">
-
-          <Menu size={20} />
-
-        </button>
-
-        {/* Logo */}
-        <div className="leading-tight">
-
-          <h1 className="text-[32px] font-extrabold tracking-tight text-blue-900">
-            PINTARIN
-          </h1>
-
-          <p className="-mt-1 text-xs text-slate-500">
-            Education Intelligence Platform
-          </p>
-
-        </div>
-
-      </div>
-
-      {/* RIGHT */}
-      <div className="flex items-center gap-3">
-
-        {/* Search */}
-        <div className="hidden items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 md:flex">
-
-          <Search size={18} className="text-slate-400" />
-
-          <input
-            type="text"
-            placeholder="Cari sekolah atau kecamatan..."
-            className="w-[300px] bg-transparent text-sm text-slate-700 placeholder:text-slate-400"
-          />
-
-        </div>
-
-        {/* Notification */}
-        <div className="relative">
-
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 backdrop-blur">
+      <div className="flex h-[64px] items-center justify-between px-4 md:px-6 xl:px-8">
+        {/* LEFT */}
+        <div className="flex items-center gap-4">
+          {/* Mobile Menu */}
           <button
-            onClick={() => setOpenNotif(!openNotif)}
-            className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white transition hover:bg-slate-50"
+            onClick={() => setSidebarOpen(true)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white lg:hidden"
           >
-
-            <Bell size={19} className="text-slate-700" />
-
-            <div className="absolute right-3 top-3 h-2 w-2 rounded-full bg-red-500"></div>
-
+            <Menu size={20} />
           </button>
 
-          {/* Notification Dropdown */}
-          {openNotif && (
-            <div className="absolute right-0 mt-3 w-[360px] rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
+          {/* Logo */}
+          <div>
+            <h1 className="text-[18px] font-bold tracking-tight text-blue-900">
+              PINTARIN
+            </h1>
 
-              {/* Header */}
-              <div className="flex items-center justify-between">
+            <p className="text-xs text-slate-500">
+              Education Intelligence Dashboard
+            </p>
+          </div>
+        </div>
 
-                <div>
+        {/* RIGHT */}
+        <div className="flex items-center gap-3 md:gap-4">
+          {/* Search */}
+          <div className="hidden items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 md:flex">
+            <Search size={18} className="text-slate-400" />
 
-                  <h2 className="text-lg font-bold text-slate-800">
+            <input
+              type="text"
+              placeholder="Cari sekolah..."
+              className="w-[220px] bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 xl:w-[280px]"
+            />
+          </div>
+
+          {/* Notification */}
+          <div ref={notifRef} className="relative">
+            <button
+              onClick={() => setShowNotif(!showNotif)}
+              className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white transition hover:bg-slate-50"
+            >
+              <Bell size={20} className="text-slate-700" />
+
+              {/* Badge */}
+              <div className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-red-500"></div>
+            </button>
+
+            {/* Dropdown */}
+            {showNotif && (
+              <div className="absolute right-0 mt-3 w-[340px] rounded-3xl border border-slate-200 bg-white p-4 shadow-lg">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-slate-800">
                     Notifikasi
                   </h2>
 
-                  <p className="text-sm text-slate-500">
-                    Aktivitas terbaru sistem
-                  </p>
-
+                  <button className="text-xs font-medium text-blue-700 hover:text-blue-800">
+                    Tandai Dibaca
+                  </button>
                 </div>
 
-                <div className="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-600">
+                {/* Items */}
+                <div className="mt-4 space-y-3">
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <p className="text-sm font-medium text-slate-800">
+                      Data sekolah menunggu verifikasi
+                    </p>
 
-                  3 Baru
+                    <p className="mt-1 text-xs text-slate-500">
+                      SD Negeri Coblong 01 baru submit data.
+                    </p>
+                  </div>
 
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <p className="text-sm font-medium text-slate-800">
+                      Pengajuan bantuan CSR baru
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-500">
+                      PT Maju Jaya mengajukan bantuan pendidikan.
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <p className="text-sm font-medium text-slate-800">
+                      Risk score meningkat
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-500">
+                      Kecamatan Coblong masuk prioritas tinggi.
+                    </p>
+                  </div>
                 </div>
+              </div>
+            )}
+          </div>
 
+          {/* Profile */}
+          <div ref={profileRef} className="relative">
+            <button
+              onClick={() => setShowProfile(!showProfile)}
+              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 transition hover:bg-slate-50"
+            >
+              {/* Avatar */}
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-100 font-semibold text-blue-700">
+                A
               </div>
 
-              {/* Notifications */}
-              <div className="mt-5 space-y-3">
+              {/* Info */}
+              <div className="hidden text-left md:block">
+                <h3 className="text-sm font-semibold text-slate-800">
+                  {user?.name || "User Dinas"}
+                </h3>
 
-                {notifications.map((notif, index) => {
-                  const Icon = notif.icon;
-
-                  return (
-                    <button
-                      key={index}
-                      className="flex w-full items-start gap-3 rounded-2xl p-3 text-left transition hover:bg-slate-50"
-                    >
-
-                      {/* Icon */}
-                      <div
-                        className={`flex h-11 w-11 items-center justify-center rounded-2xl ${notif.color}`}
-                      >
-
-                        <Icon size={20} />
-
-                      </div>
-
-                      {/* Content */}
-                      <div>
-
-                        <h3 className="text-sm font-semibold text-slate-800">
-                          {notif.title}
-                        </h3>
-
-                        <p className="mt-1 text-xs text-slate-500">
-                          {notif.time}
-                        </p>
-
-                      </div>
-
-                    </button>
-                  );
-                })}
-
+                <p className="text-xs text-slate-500">Dinas Pendidikan</p>
               </div>
+            </button>
 
-            </div>
-          )}
-
-        </div>
-
-        {/* User Dropdown */}
-        <div className="relative">
-
-          <button
-            onClick={() => setOpenProfile(!openProfile)}
-            className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 transition hover:bg-slate-50"
-          >
-
-            {/* Avatar */}
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-700 text-sm font-bold text-white">
-              AM
-            </div>
-
-            {/* Info */}
-            <div className="hidden text-left md:block">
-
-              <h2 className="text-sm font-semibold leading-none text-slate-800">
-                Aqmal Madani
-              </h2>
-
-              <p className="mt-1 text-xs text-slate-500">
-                Dinas Pendidikan
-              </p>
-
-            </div>
-
-            <ChevronDown
-              size={18}
-              className={`hidden text-slate-400 transition md:block
-              
-              ${openProfile ? "rotate-180" : ""}
-              
-              `}
-            />
-
-          </button>
-
-          {/* Profile Dropdown */}
-          {openProfile && (
-            <div className="absolute right-0 mt-3 w-[280px] rounded-3xl border border-slate-200 bg-white p-4 shadow-2xl">
-
-              {/* User Header */}
-              <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
-
-                {/* Avatar */}
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 font-bold text-white">
-                  AM
-                </div>
-
-                {/* User */}
-                <div>
-
-                  <h2 className="font-semibold text-slate-800">
-                    Aqmal Madani
-                  </h2>
-
-                  <p className="text-sm text-slate-500">
-                    aqmal@dinas.go.id
-                  </p>
-
-                </div>
-
-              </div>
-
-              {/* Menu */}
-              <div className="mt-4 space-y-1">
-
-                {/* Profile */}
+            {/* Dropdown */}
+            {showProfile && (
+              <div className="absolute right-0 mt-3 w-[240px] rounded-3xl border border-slate-200 bg-white p-3 shadow-lg">
                 <button className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-
                   <User size={18} />
-
-                  Profil Saya
-
+                  Profil
                 </button>
 
-                {/* Settings */}
-                <button className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-
+                <button className="mt-1 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
                   <Settings size={18} />
-
                   Pengaturan
-
                 </button>
 
-                {/* Logout */}
-                <button className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50">
-
+                <button
+                  onClick={handleLogout}
+                  className="mt-1 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                >
                   <LogOut size={18} />
-
                   Logout
-
                 </button>
-
               </div>
-
-            </div>
-          )}
-
+            )}
+          </div>
         </div>
-
       </div>
-
     </header>
   );
 }

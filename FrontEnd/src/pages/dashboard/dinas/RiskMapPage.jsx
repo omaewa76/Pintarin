@@ -113,7 +113,7 @@ export default function RiskMapPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Real Map */}
             <div className="mt-6 h-[500px] overflow-hidden rounded-3xl">
               <BandungMap />
