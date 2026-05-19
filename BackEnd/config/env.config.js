@@ -1,15 +1,11 @@
-const HOST = process.env.HOST;
-const PORT = process.env.PORT;
-const SALT_ROUNDS = process.env.SALT_ROUNDS;
-const RANDOM_LENGTH = process.env.RANDOM_LENGTH;
-const ACCESS_TOKEN_KEY = process.env.ACCESS_TOKEN_KEY;
-const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
+const accesstoken = process.env.ACCESS_TOKEN_SECRET;
+const refreshtoken = process.env.REFRESH_TOKEN_SECRET;
+const host = process.env.HOST || 'localhost';
+const port = parseInt(process.env.PORT) || 3000;
 
 module.exports = {
-    HOST,
-    PORT,
-    SALT_ROUNDS,
-    RANDOM_LENGTH,
-    ACCESS_TOKEN_KEY,
-    REFRESH_TOKEN_KEY
+    ACCESS_TOKEN_SECRET: accesstoken,
+    REFRESH_TOKEN_SECRET: refreshtoken,
+    HOST: host,
+    PORT: port,
 };

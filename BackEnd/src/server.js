@@ -1,26 +1,19 @@
 // src/server.js
 
-// import konfigurasi
-const { HOST, PORT } = require('../config/env.config');
-
-// import iibrari
+// Import library dan modul yang diperlukan
 const express = require('express');
-const helmet = require('helmet');
 
+// Config
+const { HOST, PORT } = require('../config/env.config');
 const app = express();
 
-// security headers
-app.use(helmet()); 
-
-// parsing json
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
+// Global error handler
 app.use((error, req, res, next) => {
-    console.error(error); 
-    
-})
-
-app.listen(PORT, () => {
-    console.log(`Server is running on ${HOST}:${PORT}`);
+  console.error(error);
+  if (error) {
+    res.status(error.statusCode).json({ status: 'failed', message: error.message });
+  }
 });
+
+// Menjalankan server
+app.listen(PORT, () => console.log(`Server running on ${HOST}:${PORT}`));

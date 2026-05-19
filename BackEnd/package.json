@@ -1,16 +1,7 @@
 {
-  "name": "backend_pintarin",
+  "name": "Backend Pintarin",
   "version": "1.0.0",
-  "description": "Capstone project - backend pintarin",
-  "homepage": "https://github.com/Tembok-Ratapan/Pintarin#readme",
-  "bugs": {
-    "url": "https://github.com/Tembok-Ratapan/Pintarin/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tembok-Ratapan/Pintarin.git"
-  },
-  "type": "commonjs",
+  "description": "Backed Pintarin",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
