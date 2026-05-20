@@ -1,3 +1,5 @@
+import { useMemo, useState } from "react";
+
 import {
   ArrowUpRight,
   Brain,
@@ -8,52 +10,69 @@ import {
   ShieldAlert,
   Sparkles,
   TrendingUp,
+  X,
   XCircle,
 } from "lucide-react";
 
-const schoolData = [
-  {
-    name: "SD Negeri Coblong 01",
-    district: "Coblong",
-    date: "17 Mei 2026",
-    update: "Data Siswa Rentan",
-    status: "Pending",
-    risk: 92,
-    students: 812,
-  },
-
-  {
-    name: "SMP Negeri 05 Bandung",
-    district: "Kiaracondong",
-    date: "16 Mei 2026",
-    update: "Perubahan Infrastruktur",
-    status: "Approved",
-    risk: 88,
-    students: 721,
-  },
-
-  {
-    name: "SD Negeri Sukajadi 03",
-    district: "Sukajadi",
-    date: "15 Mei 2026",
-    update: "Data Bantuan",
-    status: "Rejected",
-    risk: 76,
-    students: 603,
-  },
-
-  {
-    name: "SMP Negeri Antapani 02",
-    district: "Antapani",
-    date: "14 Mei 2026",
-    update: "Data Infrastruktur",
-    status: "Pending",
-    risk: 84,
-    students: 534,
-  },
-];
+import initialSchoolData from "../../../data/schoolData";
 
 export default function SchoolPage() {
+  const [search, setSearch] = useState("");
+
+  const [activeTab, setActiveTab] = useState("Pending");
+
+  const [selectedSchool, setSelectedSchool] = useState(null);
+
+  const [schools, setSchools] = useState(initialSchoolData);
+
+  /* ================= ACTION ================= */
+
+  const updateSchoolStatus = (schoolName, newStatus) => {
+    const updatedSchools = schools.map((school) =>
+      school.name === schoolName
+        ? {
+            ...school,
+            status: newStatus,
+          }
+        : school,
+    );
+
+    setSchools(updatedSchools);
+
+    setSelectedSchool({
+      ...selectedSchool,
+      status: newStatus,
+    });
+  };
+
+  /* ================= FILTER ================= */
+
+  const filteredSchools = useMemo(() => {
+    return schools.filter((school) => {
+      const matchSearch = school.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      const matchStatus = school.status === activeTab;
+
+      return matchSearch && matchStatus;
+    });
+  }, [search, activeTab, schools]);
+
+  /* ================= STATS ================= */
+
+  const pendingCount = schools.filter(
+    (school) => school.status === "Pending",
+  ).length;
+
+  const approvedCount = schools.filter(
+    (school) => school.status === "Approved",
+  ).length;
+
+  const rejectedCount = schools.filter(
+    (school) => school.status === "Rejected",
+  ).length;
+
   return (
     <div className="space-y-8">
       {/* Hero */}
@@ -94,7 +113,7 @@ export default function SchoolPage() {
       {/* Stats */}
       <section>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {/* Card */}
+          {/* Total */}
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
@@ -103,7 +122,7 @@ export default function SchoolPage() {
                 </p>
 
                 <h2 className="mt-4 text-4xl font-black tracking-tight text-slate-900">
-                  2,341
+                  {schools.length}
                 </h2>
               </div>
 
@@ -118,7 +137,7 @@ export default function SchoolPage() {
             </div>
           </div>
 
-          {/* Card */}
+          {/* Pending */}
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
@@ -127,7 +146,7 @@ export default function SchoolPage() {
                 </p>
 
                 <h2 className="mt-4 text-4xl font-black tracking-tight text-yellow-600">
-                  12
+                  {pendingCount}
                 </h2>
               </div>
 
@@ -141,14 +160,14 @@ export default function SchoolPage() {
             </div>
           </div>
 
-          {/* Card */}
+          {/* Approved */}
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm font-medium text-slate-500">Approved</p>
 
                 <h2 className="mt-4 text-4xl font-black tracking-tight text-emerald-600">
-                  184
+                  {approvedCount}
                 </h2>
               </div>
 
@@ -162,26 +181,24 @@ export default function SchoolPage() {
             </div>
           </div>
 
-          {/* Card */}
+          {/* Rejected */}
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-500">
-                  Risiko Tinggi
-                </p>
+                <p className="text-sm font-medium text-slate-500">Rejected</p>
 
                 <h2 className="mt-4 text-4xl font-black tracking-tight text-red-600">
-                  328
+                  {rejectedCount}
                 </h2>
               </div>
 
               <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-red-100 text-red-700">
-                <ShieldAlert size={26} />
+                <XCircle size={26} />
               </div>
             </div>
 
             <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
-              Prioritas bantuan
+              Data ditolak
             </div>
           </div>
         </div>
@@ -190,17 +207,27 @@ export default function SchoolPage() {
       {/* Tabs */}
       <section>
         <div className="flex flex-wrap gap-3">
-          <button className="rounded-2xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white">
-            Menunggu Verifikasi
-          </button>
-
-          <button className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-            Sudah Diverifikasi
-          </button>
-
-          <button className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
-            Ditolak
-          </button>
+          {["Pending", "Approved", "Rejected"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`rounded-2xl px-5 py-3 text-sm font-semibold transition
+              
+              ${
+                activeTab === tab
+                  ? "bg-blue-700 text-white"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              }
+              
+              `}
+            >
+              {tab === "Pending"
+                ? "Menunggu Verifikasi"
+                : tab === "Approved"
+                  ? "Sudah Diverifikasi"
+                  : "Ditolak"}
+            </button>
+          ))}
         </div>
       </section>
 
@@ -213,12 +240,13 @@ export default function SchoolPage() {
 
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari sekolah..."
               className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
             />
           </div>
 
-          {/* Filter */}
           <button className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm font-medium text-slate-700 transition hover:bg-slate-100">
             Semua Kecamatan
           </button>
@@ -287,35 +315,36 @@ export default function SchoolPage() {
             </thead>
 
             <tbody>
-              {schoolData.map((school, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-slate-100 transition hover:bg-slate-50"
-                >
-                  {/* School */}
-                  <td className="px-6 py-5">
-                    <div>
-                      <h3 className="font-semibold tracking-tight text-slate-800">
-                        {school.name}
-                      </h3>
+              {filteredSchools.length > 0 ? (
+                filteredSchools.map((school, index) => (
+                  <tr
+                    key={index}
+                    className="border-b border-slate-100 transition hover:bg-slate-50"
+                  >
+                    {/* School */}
+                    <td className="px-6 py-5">
+                      <div>
+                        <h3 className="font-semibold tracking-tight text-slate-800">
+                          {school.name}
+                        </h3>
 
-                      <p className="mt-1 text-sm text-slate-500">
-                        Submit {school.date}
-                      </p>
-                    </div>
-                  </td>
+                        <p className="mt-1 text-sm text-slate-500">
+                          Submit {school.date}
+                        </p>
+                      </div>
+                    </td>
 
-                  {/* District */}
-                  <td className="px-6 py-5 text-sm font-medium text-slate-700">
-                    {school.district}
-                  </td>
+                    {/* District */}
+                    <td className="px-6 py-5 text-sm font-medium text-slate-700">
+                      {school.district}
+                    </td>
 
-                  {/* Risk */}
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-3">
-                      <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-200">
-                        <div
-                          className={`h-full rounded-full
+                    {/* Risk */}
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-200">
+                          <div
+                            className={`h-full rounded-full
                               
                               ${
                                 school.risk >= 85
@@ -325,69 +354,197 @@ export default function SchoolPage() {
                                     : "bg-green-500"
                               }
                               
-                            `}
-                          style={{
-                            width: `${school.risk}%`,
-                          }}
-                        ></div>
+                              `}
+                            style={{
+                              width: `${school.risk}%`,
+                            }}
+                          ></div>
+                        </div>
+
+                        <span className="text-sm font-bold text-slate-800">
+                          {school.risk}
+                        </span>
                       </div>
+                    </td>
 
-                      <span className="text-sm font-bold text-slate-800">
-                        {school.risk}
-                      </span>
+                    {/* Students */}
+                    <td className="px-6 py-5 text-sm font-medium text-slate-700">
+                      {school.students}
+                    </td>
+
+                    {/* Update */}
+                    <td className="px-6 py-5 text-sm font-medium text-slate-700">
+                      {school.update}
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-5">
+                      <div
+                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold
+                          
+                          ${
+                            school.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : school.status === "Approved"
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "bg-red-100 text-red-700"
+                          }
+                          
+                          `}
+                      >
+                        {school.status === "Pending" && <Clock3 size={14} />}
+
+                        {school.status === "Approved" && (
+                          <CheckCircle2 size={14} />
+                        )}
+
+                        {school.status === "Rejected" && <XCircle size={14} />}
+
+                        {school.status}
+                      </div>
+                    </td>
+
+                    {/* Action */}
+                    <td className="px-6 py-5 text-right">
+                      <button
+                        onClick={() => setSelectedSchool(school)}
+                        className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                      >
+                        <Eye size={18} />
+                        Review
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="px-6 py-16 text-center">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-700">
+                        Tidak ada data ditemukan
+                      </h3>
+
+                      <p className="mt-2 text-sm text-slate-500">
+                        Coba gunakan keyword lain.
+                      </p>
                     </div>
-                  </td>
-
-                  {/* Students */}
-                  <td className="px-6 py-5 text-sm font-medium text-slate-700">
-                    {school.students}
-                  </td>
-
-                  {/* Update */}
-                  <td className="px-6 py-5 text-sm font-medium text-slate-700">
-                    {school.update}
-                  </td>
-
-                  {/* Status */}
-                  <td className="px-6 py-5">
-                    <div
-                      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold
-                        
-                        ${
-                          school.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : school.status === "Approved"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : "bg-red-100 text-red-700"
-                        }
-                        
-                        `}
-                    >
-                      {school.status === "Pending" && <Clock3 size={14} />}
-
-                      {school.status === "Approved" && (
-                        <CheckCircle2 size={14} />
-                      )}
-
-                      {school.status === "Rejected" && <XCircle size={14} />}
-
-                      {school.status}
-                    </div>
-                  </td>
-
-                  {/* Action */}
-                  <td className="px-6 py-5 text-right">
-                    <button className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
-                      <Eye size={18} />
-                      Review
-                    </button>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
       </section>
+
+      {/* Modal */}
+      {selectedSchool && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-5 backdrop-blur-sm">
+          <div className="w-full max-w-2xl rounded-[32px] bg-white p-8 shadow-2xl">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-3xl font-black tracking-tight text-slate-900">
+                  {selectedSchool.name}
+                </h2>
+
+                <p className="mt-2 text-sm text-slate-500">
+                  Review dan validasi data sekolah
+                </p>
+              </div>
+
+              <button
+                onClick={() => setSelectedSchool(null)}
+                className="rounded-2xl bg-slate-100 p-3 text-slate-600 transition hover:bg-slate-200"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              <div className="rounded-2xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">Kecamatan</p>
+
+                <h3 className="mt-2 text-lg font-bold text-slate-800">
+                  {selectedSchool.district}
+                </h3>
+              </div>
+
+              <div className="rounded-2xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">Risk Score</p>
+
+                <h3 className="mt-2 text-lg font-bold text-red-600">
+                  {selectedSchool.risk}
+                </h3>
+              </div>
+
+              <div className="rounded-2xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">Jumlah Siswa</p>
+
+                <h3 className="mt-2 text-lg font-bold text-slate-800">
+                  {selectedSchool.students}
+                </h3>
+              </div>
+
+              <div className="rounded-2xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">Jenis Update</p>
+
+                <h3 className="mt-2 text-lg font-bold text-slate-800">
+                  {selectedSchool.update}
+                </h3>
+              </div>
+            </div>
+
+            {/* AI Recommendation */}
+            <div className="mt-6 rounded-3xl border border-blue-100 bg-blue-50 p-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                  <Brain size={22} />
+                </div>
+
+                <div>
+                  <h3 className="font-bold text-slate-800">
+                    AI Recommendation
+                  </h3>
+
+                  <p className="mt-1 text-sm text-slate-600">
+                    Data layak diprioritaskan untuk bantuan pendidikan semester
+                    ini.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 flex flex-wrap justify-end gap-4">
+              <button
+                onClick={() => setSelectedSchool(null)}
+                className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Tutup
+              </button>
+
+              <button
+                onClick={() =>
+                  updateSchoolStatus(selectedSchool.name, "Rejected")
+                }
+                className="rounded-2xl bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-700"
+              >
+                Reject
+              </button>
+
+              <button
+                onClick={() =>
+                  updateSchoolStatus(selectedSchool.name, "Approved")
+                }
+                className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              >
+                Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

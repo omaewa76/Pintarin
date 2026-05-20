@@ -36,20 +36,29 @@ export default function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    /* ================= ROLE DETECTION ================= */
     let role = "dinas";
 
     if (form.email.includes("school")) {
       role = "school";
     }
 
+    if (form.email.includes("csr")) {
+      role = "csr";
+    }
+
+    /* ================= LOGIN ================= */
     login({
       name: "Aqmal Madani",
       role,
       email: form.email,
     });
 
+    /* ================= REDIRECT ================= */
     if (role === "school") {
       navigate("/school");
+    } else if (role === "csr") {
+      navigate("/csr");
     } else {
       navigate("/dinas");
     }
@@ -64,7 +73,7 @@ export default function LoginPage() {
 
       {/* Main */}
       <div className="relative z-10 grid min-h-screen lg:grid-cols-2">
-        {/* LEFT */}
+        {/* ================= LEFT ================= */}
         <div className="hidden flex-col justify-between border-r border-white/30 bg-gradient-to-br from-blue-700 via-indigo-700 to-slate-900 p-10 text-white lg:flex">
           {/* Top */}
           <div>
@@ -127,10 +136,10 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* RIGHT */}
+        {/* ================= RIGHT ================= */}
         <div className="flex items-center justify-center px-6 py-10">
           <div className="w-full max-w-md">
-            {/* Logo Mobile */}
+            {/* Mobile Logo */}
             <div className="mb-8 lg:hidden">
               <h1 className="text-4xl font-black tracking-tight text-slate-800">
                 PINTARIN
@@ -141,7 +150,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Card */}
+            {/* Login Card */}
             <div className="rounded-[36px] border border-white/50 bg-white/80 p-8 shadow-2xl backdrop-blur">
               {/* Header */}
               <div>

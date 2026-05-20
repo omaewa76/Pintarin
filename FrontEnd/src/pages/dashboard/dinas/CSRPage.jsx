@@ -1,3 +1,5 @@
+import { useMemo, useState } from "react";
+
 import {
   ArrowUpRight,
   Brain,
@@ -11,55 +13,36 @@ import {
   Sparkles,
   TrendingUp,
   Wallet,
+  X,
   XCircle,
 } from "lucide-react";
 
-const csrRequests = [
-  {
-    company: "PT Maju Jaya",
-    school: "SD Negeri Coblong 01",
-    type: "Renovasi Ruang Kelas",
-    value: "Rp 120 JT",
-    date: "17 Mei 2026",
-    status: "Pending",
-    priority: "High",
-  },
-
-  {
-    company: "PT Edu Teknologi",
-    school: "SMP Negeri 05 Bandung",
-    type: "Laptop & Komputer",
-    value: "Rp 85 JT",
-    date: "15 Mei 2026",
-    status: "Approved",
-    priority: "Medium",
-  },
-
-  {
-    company: "PT Nusantara Digital",
-    school: "SD Negeri Sukajadi 03",
-    type: "Beasiswa Pendidikan",
-    value: "Rp 45 JT",
-    date: "14 Mei 2026",
-    status: "Rejected",
-    priority: "Low",
-  },
-
-  {
-    company: "PT Smart Future",
-    school: "SMP Negeri Antapani 02",
-    type: "Perangkat Digital",
-    value: "Rp 95 JT",
-    date: "13 Mei 2026",
-    status: "Pending",
-    priority: "High",
-  },
-];
+import csrData from "../../../data/csrData";
 
 export default function CSRPage() {
+  const [search, setSearch] = useState("");
+
+  const [activeTab, setActiveTab] = useState("All");
+
+  const [selectedCSR, setSelectedCSR] = useState(null);
+
+  /* ================= FILTER ================= */
+
+  const filteredCSR = useMemo(() => {
+    return csrData.filter((csr) => {
+      const matchSearch =
+        csr.company.toLowerCase().includes(search.toLowerCase()) ||
+        csr.school.toLowerCase().includes(search.toLowerCase());
+
+      const matchStatus = activeTab === "All" ? true : csr.status === activeTab;
+
+      return matchSearch && matchStatus;
+    });
+  }, [search, activeTab]);
+
   return (
     <div className="space-y-8">
-      {/* Hero */}
+      {/* ================= HERO ================= */}
       <section className="overflow-hidden rounded-[36px] border border-slate-200 bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 p-8 text-white shadow-sm">
         <div className="flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
           {/* Left */}
@@ -94,7 +77,7 @@ export default function CSRPage() {
         </div>
       </section>
 
-      {/* Stats */}
+      {/* ================= STATS ================= */}
       <section>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {/* Card */}
@@ -130,7 +113,7 @@ export default function CSRPage() {
                 </p>
 
                 <h2 className="mt-4 text-4xl font-black tracking-tight text-yellow-600">
-                  8
+                  {csrData.filter((item) => item.status === "Pending").length}
                 </h2>
               </div>
 
@@ -151,7 +134,7 @@ export default function CSRPage() {
                 <p className="text-sm font-medium text-slate-500">Approved</p>
 
                 <h2 className="mt-4 text-4xl font-black tracking-tight text-emerald-600">
-                  124
+                  {csrData.filter((item) => item.status === "Approved").length}
                 </h2>
               </div>
 
@@ -190,7 +173,72 @@ export default function CSRPage() {
         </div>
       </section>
 
-      {/* Filter */}
+      {/* ================= TABS ================= */}
+      <section>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setActiveTab("All")}
+            className={`rounded-2xl px-5 py-3 text-sm font-semibold transition
+              
+              ${
+                activeTab === "All"
+                  ? "bg-emerald-600 text-white"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              }
+              
+            `}
+          >
+            Semua
+          </button>
+
+          <button
+            onClick={() => setActiveTab("Pending")}
+            className={`rounded-2xl px-5 py-3 text-sm font-semibold transition
+              
+              ${
+                activeTab === "Pending"
+                  ? "bg-yellow-500 text-white"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              }
+              
+            `}
+          >
+            Pending
+          </button>
+
+          <button
+            onClick={() => setActiveTab("Approved")}
+            className={`rounded-2xl px-5 py-3 text-sm font-semibold transition
+              
+              ${
+                activeTab === "Approved"
+                  ? "bg-emerald-600 text-white"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              }
+              
+            `}
+          >
+            Approved
+          </button>
+
+          <button
+            onClick={() => setActiveTab("Rejected")}
+            className={`rounded-2xl px-5 py-3 text-sm font-semibold transition
+              
+              ${
+                activeTab === "Rejected"
+                  ? "bg-red-600 text-white"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              }
+              
+            `}
+          >
+            Rejected
+          </button>
+        </div>
+      </section>
+
+      {/* ================= FILTER ================= */}
       <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="grid gap-4 xl:grid-cols-5">
           {/* Search */}
@@ -199,6 +247,8 @@ export default function CSRPage() {
 
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari perusahaan CSR atau sekolah..."
               className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
             />
@@ -219,7 +269,7 @@ export default function CSRPage() {
         </div>
       </section>
 
-      {/* Table */}
+      {/* ================= TABLE ================= */}
       <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
         {/* Header */}
         <div className="border-b border-slate-100 p-6">
@@ -277,104 +327,233 @@ export default function CSRPage() {
             </thead>
 
             <tbody>
-              {csrRequests.map((csr, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-slate-100 transition hover:bg-slate-50"
-                >
-                  {/* CSR */}
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700">
-                        <Building2 size={22} />
+              {filteredCSR.length > 0 ? (
+                filteredCSR.map((csr, index) => (
+                  <tr
+                    key={index}
+                    className="border-b border-slate-100 transition hover:bg-slate-50"
+                  >
+                    {/* CSR */}
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700">
+                          <Building2 size={22} />
+                        </div>
+
+                        <div>
+                          <h3 className="font-semibold tracking-tight text-slate-800">
+                            {csr.company}
+                          </h3>
+
+                          <p className="mt-1 text-sm text-slate-500">
+                            Submit {csr.date}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* School */}
+                    <td className="px-6 py-5 text-sm font-medium text-slate-700">
+                      {csr.school}
+                    </td>
+
+                    {/* Type */}
+                    <td className="px-6 py-5 text-sm font-medium text-slate-700">
+                      {csr.type}
+                    </td>
+
+                    {/* Value */}
+                    <td className="px-6 py-5">
+                      <div className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                        {csr.value}
+                      </div>
+                    </td>
+
+                    {/* Priority */}
+                    <td className="px-6 py-5">
+                      <div
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold
+                            
+                            ${
+                              csr.priority === "High"
+                                ? "bg-red-100 text-red-700"
+                                : csr.priority === "Medium"
+                                  ? "bg-yellow-100 text-yellow-700"
+                                  : "bg-emerald-100 text-emerald-700"
+                            }
+                            
+                          `}
+                      >
+                        {csr.priority}
+                      </div>
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-6 py-5">
+                      <div
+                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold
+                            
+                            ${
+                              csr.status === "Pending"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : csr.status === "Approved"
+                                  ? "bg-emerald-100 text-emerald-700"
+                                  : "bg-red-100 text-red-700"
+                            }
+                            
+                          `}
+                      >
+                        {csr.status === "Pending" && <Clock3 size={14} />}
+
+                        {csr.status === "Approved" && <ShieldCheck size={14} />}
+
+                        {csr.status === "Rejected" && <XCircle size={14} />}
+
+                        {csr.status}
+                      </div>
+                    </td>
+
+                    {/* Action */}
+                    <td className="px-6 py-5 text-right">
+                      <button
+                        onClick={() => setSelectedCSR(csr)}
+                        className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                      >
+                        <Eye size={18} />
+                        Detail
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="px-6 py-16 text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-100 text-slate-400">
+                        <Search size={28} />
                       </div>
 
-                      <div>
-                        <h3 className="font-semibold tracking-tight text-slate-800">
-                          {csr.company}
-                        </h3>
+                      <h3 className="mt-5 text-lg font-bold text-slate-700">
+                        Data tidak ditemukan
+                      </h3>
 
-                        <p className="mt-1 text-sm text-slate-500">
-                          Submit {csr.date}
-                        </p>
-                      </div>
+                      <p className="mt-2 text-sm text-slate-500">
+                        Coba gunakan keyword lain.
+                      </p>
                     </div>
-                  </td>
-
-                  {/* School */}
-                  <td className="px-6 py-5 text-sm font-medium text-slate-700">
-                    {csr.school}
-                  </td>
-
-                  {/* Type */}
-                  <td className="px-6 py-5 text-sm font-medium text-slate-700">
-                    {csr.type}
-                  </td>
-
-                  {/* Value */}
-                  <td className="px-6 py-5">
-                    <div className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                      {csr.value}
-                    </div>
-                  </td>
-
-                  {/* Priority */}
-                  <td className="px-6 py-5">
-                    <div
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold
-                        
-                        ${
-                          csr.priority === "High"
-                            ? "bg-red-100 text-red-700"
-                            : csr.priority === "Medium"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-emerald-100 text-emerald-700"
-                        }
-                        
-                        `}
-                    >
-                      {csr.priority}
-                    </div>
-                  </td>
-
-                  {/* Status */}
-                  <td className="px-6 py-5">
-                    <div
-                      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold
-                        
-                        ${
-                          csr.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : csr.status === "Approved"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : "bg-red-100 text-red-700"
-                        }
-                        
-                        `}
-                    >
-                      {csr.status === "Pending" && <Clock3 size={14} />}
-
-                      {csr.status === "Approved" && <ShieldCheck size={14} />}
-
-                      {csr.status === "Rejected" && <XCircle size={14} />}
-
-                      {csr.status}
-                    </div>
-                  </td>
-
-                  {/* Action */}
-                  <td className="px-6 py-5 text-right">
-                    <button className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
-                      <Eye size={18} />
-                      Detail
-                    </button>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
       </section>
+
+      {/* ================= MODAL ================= */}
+      {selectedCSR && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6 backdrop-blur-sm">
+          <div className="w-full max-w-2xl rounded-[32px] bg-white p-8 shadow-2xl">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+                  <HandCoins size={16} />
+                  CSR Detail
+                </div>
+
+                <h2 className="mt-5 text-3xl font-black tracking-tight text-slate-900">
+                  {selectedCSR.company}
+                </h2>
+
+                <p className="mt-2 text-sm text-slate-500">
+                  Submit {selectedCSR.date}
+                </p>
+              </div>
+
+              <button
+                onClick={() => setSelectedCSR(null)}
+                className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-500 transition hover:bg-slate-200"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="mt-8 grid gap-5 md:grid-cols-2">
+              <div className="rounded-3xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">Sekolah Tujuan</p>
+
+                <h3 className="mt-2 text-lg font-bold text-slate-800">
+                  {selectedCSR.school}
+                </h3>
+              </div>
+
+              <div className="rounded-3xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">Jenis Bantuan</p>
+
+                <h3 className="mt-2 text-lg font-bold text-slate-800">
+                  {selectedCSR.type}
+                </h3>
+              </div>
+
+              <div className="rounded-3xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">Nilai Bantuan</p>
+
+                <h3 className="mt-2 text-lg font-bold text-emerald-700">
+                  {selectedCSR.value}
+                </h3>
+              </div>
+
+              <div className="rounded-3xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">Priority</p>
+
+                <h3 className="mt-2 text-lg font-bold text-slate-800">
+                  {selectedCSR.priority}
+                </h3>
+              </div>
+            </div>
+
+            {/* AI Recommendation */}
+            <div className="mt-6 rounded-3xl border border-blue-100 bg-blue-50 p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                  <Brain size={24} />
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800">
+                    AI Recommendation
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                    Sistem AI merekomendasikan bantuan ini karena sekolah
+                    memiliki tingkat kebutuhan tinggi berdasarkan data
+                    fasilitas, ekonomi siswa, dan risk score wilayah.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 flex flex-wrap justify-end gap-4">
+              <button
+                onClick={() => setSelectedCSR(null)}
+                className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Tutup
+              </button>
+
+              <button className="rounded-2xl bg-red-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-600">
+                Reject
+              </button>
+
+              <button className="rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
+                Approve Bantuan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,28 +1,37 @@
 import { useState } from "react";
 
 import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
 
-export default function DashboardLayout({ children }) {
+import Sidebar from "./Sidebar";
+import SchoolSidebar from "./SchoolSidebar";
+import CSRSidebar from "./CSRSidebar";
+
+export default function DashboardLayout({ children, role = "dinas" }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F4F7FB]">
+    <div className="min-h-screen bg-slate-100">
       {/* Sidebar */}
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      {role === "school" ? (
+        <SchoolSidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+      ) : role === "csr" ? (
+        <CSRSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      ) : (
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      )}
 
-      {/* Main Wrapper */}
-      <div className="min-h-screen transition-all duration-300 lg:ml-[260px]">
+      {/* Main */}
+      <div className="min-h-screen lg:ml-[260px]">
         {/* Navbar */}
-        <Navbar setSidebarOpen={setSidebarOpen} />
+        <Navbar setSidebarOpen={setSidebarOpen} role={role} />
 
-        {/* Main Content */}
-        <main className="px-4 pb-8 pt-6 md:px-6 xl:px-8">
-          {/* Content Container */}
-          <div className="mx-auto w-full max-w-[1700px]">
-            {/* Inner Layout */}
-            <div className="space-y-8">{children}</div>
-          </div>
+        {/* Content */}
+        <main className="px-4 py-5 md:px-6 xl:px-8">
+          {/* Container */}
+          <div className="mx-auto w-full max-w-[1600px]">{children}</div>
         </main>
       </div>
     </div>

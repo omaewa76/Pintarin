@@ -2,9 +2,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
+/* ================= PUBLIC ================= */
 import LandingPage from "../pages/public/LandingPage";
 import LoginPage from "../pages/public/LoginPage";
 
+/* ================= DINAS ================= */
 import DinasDashboard from "../pages/dashboard/DinasDashboard";
 
 import OverviewPage from "../pages/dashboard/dinas/OverviewPage";
@@ -17,21 +19,29 @@ import AnalyticsPage from "../pages/dashboard/dinas/AnalyticsPage";
 import AccountPage from "../pages/dashboard/dinas/AccountPage";
 import SettingsPage from "../pages/dashboard/dinas/SettingsPage";
 
+/* ================= SCHOOL ================= */
+import SchoolDashboard from "../pages/dashboard/SchoolDashboard";
+
 import SchoolOverviewPage from "../pages/dashboard/school/OverviewPage";
 import SchoolProfilePage from "../pages/dashboard/school/ProfilePage";
 import SchoolAssistancePage from "../pages/dashboard/school/AssistancePage";
 import SchoolAnalyticsPage from "../pages/dashboard/school/AnalyticsPage";
 
+/* ================= CSR ================= */
+import CSRDashboard from "../pages/dashboard/CSRDashboard";
+
+import CSROverviewPage from "../pages/dashboard/csr/OverviewPage";
+
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* PUBLIC */}
+        {/* ================= PUBLIC ================= */}
         <Route path="/" element={<LandingPage />} />
 
         <Route path="/login" element={<LoginPage />} />
 
-        {/* DINAS */}
+        {/* ================= DINAS ================= */}
         <Route
           path="/dinas"
           element={
@@ -59,12 +69,12 @@ function AppRoutes() {
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 
-        {/* SCHOOL */}
+        {/* ================= SCHOOL ================= */}
         <Route
           path="/school"
           element={
             <ProtectedRoute>
-              <DinasDashboard />
+              <SchoolDashboard />
             </ProtectedRoute>
           }
         >
@@ -75,6 +85,18 @@ function AppRoutes() {
           <Route path="assistance" element={<SchoolAssistancePage />} />
 
           <Route path="analytics" element={<SchoolAnalyticsPage />} />
+        </Route>
+
+        {/* ================= CSR ================= */}
+        <Route
+          path="/csr"
+          element={
+            <ProtectedRoute>
+              <CSRDashboard />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<CSROverviewPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
