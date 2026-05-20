@@ -11,7 +11,7 @@ import DinasDashboard from "../pages/dashboard/DinasDashboard";
 
 import OverviewPage from "../pages/dashboard/dinas/OverviewPage";
 import RiskMapPage from "../pages/dashboard/dinas/RiskMapPage";
-import SchoolPage from "../pages/dashboard/dinas/SchoolPage";
+import SchoolPage from "../features/school/pages/SchoolPage";
 import SchoolReviewPage from "../pages/dashboard/dinas/SchoolReviewPage";
 import CSRPage from "../pages/dashboard/dinas/CSRPage";
 import CSRReviewPage from "../pages/dashboard/dinas/CSRReviewPage";
@@ -21,7 +21,6 @@ import SettingsPage from "../pages/dashboard/dinas/SettingsPage";
 
 /* ================= SCHOOL ================= */
 import SchoolDashboard from "../pages/dashboard/SchoolDashboard";
-
 import SchoolOverviewPage from "../pages/dashboard/school/OverviewPage";
 import SchoolProfilePage from "../pages/dashboard/school/ProfilePage";
 import SchoolAssistancePage from "../pages/dashboard/school/AssistancePage";

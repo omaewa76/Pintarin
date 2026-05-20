@@ -1,42 +1,40 @@
-import { ArrowUpRight } from "lucide-react";
-
-export default function StatsCard({ title, value, subtitle, color }) {
+export default function StatsCard({
+  title,
+  value,
+  icon: Icon,
+  iconColor = "",
+  iconBg = "",
+  valueColor = "text-slate-900",
+  badge,
+  badgeColor = "",
+}) {
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-      {/* Background Accent */}
-      <div
-        className={`absolute right-0 top-0 h-28 w-28 translate-x-10 -translate-y-10 rounded-full opacity-10 blur-2xl ${color}`}
-      ></div>
-
-      {/* Top */}
-      <div className="relative flex items-start justify-between">
-        {/* Left */}
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+      <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium tracking-tight text-slate-500">
-            {title}
-          </p>
+          <p className="text-sm font-medium text-slate-500">{title}</p>
 
-          <h2 className="mt-4 text-[34px] font-bold tracking-tight text-slate-800">
+          <h2
+            className={`mt-4 text-4xl font-black tracking-tight ${valueColor}`}
+          >
             {value}
           </h2>
         </div>
 
-        {/* Right */}
         <div
-          className={`flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-sm ${color}`}
+          className={`flex h-14 w-14 items-center justify-center rounded-3xl ${iconBg} ${iconColor}`}
         >
-          <ArrowUpRight size={18} />
+          {Icon && <Icon size={26} />}
         </div>
       </div>
 
-      {/* Bottom */}
-      <div className="relative mt-6 flex items-center justify-between">
-        <p className="max-w-[85%] text-sm leading-relaxed text-slate-500">
-          {subtitle}
-        </p>
-
-        <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
-      </div>
+      {badge && (
+        <div
+          className={`mt-6 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${badgeColor}`}
+        >
+          {badge}
+        </div>
+      )}
     </div>
   );
 }

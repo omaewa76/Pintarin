@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import csrData from "../../../data/csrData";
+import StatusBadge from "../../../components/ui/StatusBadge";
 
 export default function CSRPage() {
   const [search, setSearch] = useState("");
@@ -390,27 +391,7 @@ export default function CSRPage() {
 
                     {/* Status */}
                     <td className="px-6 py-5">
-                      <div
-                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold
-                            
-                            ${
-                              csr.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : csr.status === "Approved"
-                                  ? "bg-emerald-100 text-emerald-700"
-                                  : "bg-red-100 text-red-700"
-                            }
-                            
-                          `}
-                      >
-                        {csr.status === "Pending" && <Clock3 size={14} />}
-
-                        {csr.status === "Approved" && <ShieldCheck size={14} />}
-
-                        {csr.status === "Rejected" && <XCircle size={14} />}
-
-                        {csr.status}
-                      </div>
+                      <StatusBadge status={csr.status} />
                     </td>
 
                     {/* Action */}
