@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 
@@ -21,15 +21,21 @@ import SettingsPage from "../pages/dashboard/dinas/SettingsPage";
 
 /* ================= SCHOOL ================= */
 import SchoolDashboard from "../pages/dashboard/SchoolDashboard";
+
 import SchoolOverviewPage from "../pages/dashboard/school/OverviewPage";
 import SchoolProfilePage from "../pages/dashboard/school/ProfilePage";
 import SchoolAssistancePage from "../pages/dashboard/school/AssistancePage";
 import SchoolAnalyticsPage from "../pages/dashboard/school/AnalyticsPage";
+import SchoolReportsPage from "../pages/dashboard/school/ReportsPage";
 
 /* ================= CSR ================= */
 import CSRDashboard from "../pages/dashboard/CSRDashboard";
 
 import CSROverviewPage from "../pages/dashboard/csr/OverviewPage";
+import CSRSchoolsPage from "../pages/dashboard/csr/SchoolsPage";
+import CSRDistributionPage from "../pages/dashboard/csr/DistributionPage";
+import CSRAnalyticsPage from "../pages/dashboard/csr/AnalyticsPage";
+import CSRReportsPage from "../pages/dashboard/csr/ReportsPage";
 
 function AppRoutes() {
   return (
@@ -44,7 +50,7 @@ function AppRoutes() {
         <Route
           path="/dinas"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["dinas"]}>
               <DinasDashboard />
             </ProtectedRoute>
           }
@@ -72,7 +78,7 @@ function AppRoutes() {
         <Route
           path="/school"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["school"]}>
               <SchoolDashboard />
             </ProtectedRoute>
           }
@@ -84,19 +90,32 @@ function AppRoutes() {
           <Route path="assistance" element={<SchoolAssistancePage />} />
 
           <Route path="analytics" element={<SchoolAnalyticsPage />} />
+
+          <Route path="reports" element={<SchoolReportsPage />} />
         </Route>
 
         {/* ================= CSR ================= */}
         <Route
           path="/csr"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["csr"]}>
               <CSRDashboard />
             </ProtectedRoute>
           }
         >
           <Route index element={<CSROverviewPage />} />
+
+          <Route path="schools" element={<CSRSchoolsPage />} />
+
+          <Route path="distribution" element={<CSRDistributionPage />} />
+
+          <Route path="analytics" element={<CSRAnalyticsPage />} />
+
+          <Route path="reports" element={<CSRReportsPage />} />
         </Route>
+
+        {/* ================= 404 ================= */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
