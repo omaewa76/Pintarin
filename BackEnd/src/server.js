@@ -1,19 +1,51 @@
-// src/server.js
-
-// Import library dan modul yang diperlukan
+require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
 
-// Config
-const { HOST, PORT } = require('../config/env.config');
+const { connectDB } = require('../config/db.config');
+const { errorHandler } = require('./utils/errorHandler');
+const { generalLimiter, authLimiter, heavyApiLimiter } = require('../config/limiter.config');
+
+const authRoutes = require('./routes/authRoutes');
+const schoolRoutes = require('./routes/schoolRoutes');
+const submissionRoutes = require('./routes/submissionRoutes');
+const districtRoutes = require('./routes/districtRoutes');
+const csrRoutes = require('./routes/csrRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
+const aiRoutes = require('./routes/aiRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const accountRoutes = require('./routes/accountRoutes');
+
 const app = express();
+const HOST = process.env.HOST || 'localhost';
+const PORT = parseInt(process.env.PORT) || 3000;
 
-// Global error handler
-app.use((error, req, res, next) => {
-  console.error(error);
-  if (error) {
-    res.status(error.statusCode).json({ status: 'failed', message: error.message });
-  }
+connectDB();
+
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api', generalLimiter);
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Menjalankan server
-app.listen(PORT, () => console.log(`Server running on ${HOST}:${PORT}`));
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/ai', heavyApiLimiter, aiRoutes);
+app.use('/api/analytics', heavyApiLimiter, analyticsRoutes);
+app.use('/api/schools', schoolRoutes);
+app.use('/api/submissions', submissionRoutes);
+app.use('/api/districts', districtRoutes);
+app.use('/api/csr', csrRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/accounts', accountRoutes);
+
+app.use(errorHandler);
+
+app.listen(PORT, HOST, () => {
+  console.log(`Server running at http://${HOST}:${PORT}`);
+});

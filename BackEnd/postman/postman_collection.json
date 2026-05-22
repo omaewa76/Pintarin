@@ -1,0 +1,1348 @@
+{
+  "info": {
+    "name": "School CSR API - Kota Bandung",
+    "description": "API untuk manajemen sekolah, CSR, dan analisis risiko",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login - Dinas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "pm.test('Response has access_token', () => {",
+                  "  const jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.data).to.have.property('access_token');",
+                  "  pm.collectionVariables.set('accessToken', jsonData.data.access_token);",
+                  "  pm.collectionVariables.set('refreshToken', jsonData.data.refresh_token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@dinas.bandung.go.id\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Sekolah",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "pm.test('Response has access_token', () => {",
+                  "  const jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.data).to.have.property('access_token');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sman1@bandung.sch.id\",\n  \"password\": \"sekolah123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - CSR",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "pm.test('Response has access_token', () => {",
+                  "  const jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.data).to.have.property('access_token');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"csr@telkom.co.id\",\n  \"password\": \"csr123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "pm.test('Response has user data', () => {",
+                  "  const jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.data).to.have.property('id');",
+                  "  pm.expect(jsonData.data).to.have.property('email');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "pm.test('Response has new access_token', () => {",
+                  "  const jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.data).to.have.property('access_token');",
+                  "  pm.collectionVariables.set('accessToken', jsonData.data.access_token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Schools",
+      "item": [
+        {
+          "name": "Get All Schools",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "pm.test('Response has data array', () => {",
+                  "  const jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.data).to.have.property('data');",
+                  "  pm.expect(jsonData.data.data).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Schools with Filters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools?level=SMA&risk_category=Tinggi&search=negeri",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools"],
+              "query": [
+                {
+                  "key": "level",
+                  "value": "SMA"
+                },
+                {
+                  "key": "risk_category",
+                  "value": "Tinggi"
+                },
+                {
+                  "key": "search",
+                  "value": "negeri"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get School By ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "pm.test('Response has school data', () => {",
+                  "  const jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.data).to.have.property('id');",
+                  "  pm.expect(jsonData.data).to.have.property('name');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get School Risk History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/1/risk-history?limit=12",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "1", "risk-history"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "12"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verify School (Dinas only)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/schools/1/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools", "1", "verify"]
+            }
+          }
+        },
+        {
+          "name": "Create School (Dinas only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SMA Negeri 5 Bandung\",\n  \"npsn\": \"20223456\",\n  \"district_id\": 1,\n  \"level\": \"SMA\",\n  \"accreditation\": \"A\",\n  \"student_count\": 1200,\n  \"vulnerable_student_count\": 150,\n  \"teacher_count\": 60,\n  \"classroom_count\": 30,\n  \"building_condition\": \"Baik\",\n  \"address\": \"Jl. Citarum No. 1 Bandung\",\n  \"phone\": \"022-4234567\",\n  \"email\": \"sman5@bandung.sch.id\",\n  \"principal_name\": \"Drs. Ahmad Hidayat\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/schools",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "schools"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. School Data Submissions",
+      "item": [
+        {
+          "name": "Get All Submissions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/submissions?status=Pending&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "submissions"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Pending"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Submission By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/submissions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "submissions", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Submission (Sekolah)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"update_type\": \"Update Data Siswa Rentan\",\n  \"data_after\": {\n    \"vulnerableStudentCount\": 200,\n    \"pipRecipientCount\": 180\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/submissions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "submissions"]
+            }
+          }
+        },
+        {
+          "name": "Approve Submission (Dinas)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/submissions/1/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "submissions", "1", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Reject Submission (Dinas)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rejection_reason\": \"Data tidak lengkap, silakan lengkapi data siswa\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/submissions/1/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "submissions", "1", "reject"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Districts",
+      "item": [
+        {
+          "name": "Get All Districts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/districts?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "districts"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get District Ranking",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/districts/ranking",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "districts", "ranking"]
+            }
+          }
+        },
+        {
+          "name": "Get District By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/districts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "districts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get District Risk History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/districts/1/risk-history",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "districts", "1", "risk-history"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. CSR Companies & Assistance",
+      "item": [
+        {
+          "name": "Get All CSR Companies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/companies?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "companies"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get CSR Company By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/companies/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "companies", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create CSR Company (Dinas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"PT. Bank Mandiri\",\n  \"industry\": \"Perbankan\",\n  \"contact_person\": \"Budi Santoso\",\n  \"contact_email\": \"csr@bankmandiri.co.id\",\n  \"contact_phone\": \"021-1234567\",\n  \"address\": \"Jl. Asia Afrika No. 1 Jakarta\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/companies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "companies"]
+            }
+          }
+        },
+        {
+          "name": "Get All Assistance Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/assistance?status=Pending&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "assistance"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Pending"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Assistance Request By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/assistance/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "assistance", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Assistance Request (CSR)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"school_id\": 1,\n  \"type\": \"Infrastruktur\",\n  \"description\": \"Renovasi 3 ruang kelas rusak\",\n  \"amount\": 150000000\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/assistance",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "assistance"]
+            }
+          }
+        },
+        {
+          "name": "Approve Assistance (Dinas)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/assistance/1/approve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "assistance", "1", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Reject Assistance (Dinas)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rejection_reason\": \"Dokumen tidak lengkap\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/assistance/1/reject",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "assistance", "1", "reject"]
+            }
+          }
+        },
+        {
+          "name": "Complete Assistance",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Bantuan telah disalurkan dan diterima sekolah\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/csr/assistance/1/complete",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "csr", "assistance", "1", "complete"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Analytics",
+      "item": [
+        {
+          "name": "Get Overview Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics/overview",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics", "overview"]
+            }
+          }
+        },
+        {
+          "name": "Get Risk Trend",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics/risk-trend?months=6",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics", "risk-trend"],
+              "query": [
+                {
+                  "key": "months",
+                  "value": "6"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get District Ranking",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics/district-ranking?limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics", "district-ranking"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Assistance Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics/assistance-summary?year=2024&group_by=month",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics", "assistance-summary"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2024"
+                },
+                {
+                  "key": "group_by",
+                  "value": "month"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Compare Schools",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"school_ids\": [1, 2, 3]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics/school-comparison",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "analytics", "school-comparison"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. AI Predictions",
+      "item": [
+        {
+          "name": "Predict Risk (Single School)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"school_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/predict-risk",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ai", "predict-risk"]
+            }
+          }
+        },
+        {
+          "name": "Batch Predict (All Schools)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model_version\": \"v1.0.0\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/batch-predict",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ai", "batch-predict"]
+            }
+          }
+        },
+        {
+          "name": "Get AI Insights",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/insights?limit=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ai", "insights"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Train AI Model",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"force_retrain\": true,\n  \"test_split\": 0.2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/train",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ai", "train"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Notifications",
+      "item": [
+        {
+          "name": "Get My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/unread-count",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications", "unread-count"]
+            }
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/1/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications", "1", "read"]
+            }
+          }
+        },
+        {
+          "name": "Mark All Notifications as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/read-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications", "read-all"]
+            }
+          }
+        },
+        {
+          "name": "Broadcast Notification (Dinas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"sekolah\",\n  \"title\": \"Pengumuman Penting\",\n  \"message\": \"Segera lengkapi data sekolah untuk verifikasi\",\n  \"type\": \"warning\",\n  \"link\": \"/schools/data\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/broadcast",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications", "broadcast"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Account Management (Dinas only)",
+      "item": [
+        {
+          "name": "Get All Accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts?role=sekolah&status=active&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts"],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "sekolah"
+                },
+                {
+                  "key": "status",
+                  "value": "active"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Account By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Account (Dinas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"SMA Negeri 3 Bandung\",\n  \"email\": \"sman3@bandung.sch.id\",\n  \"password\": \"sekolah123\",\n  \"role\": \"sekolah\",\n  \"school_id\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts"]
+            }
+          }
+        },
+        {
+          "name": "Suspend Account (Dinas)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Melanggar aturan penggunaan\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts/2/suspend",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts", "2", "suspend"]
+            }
+          }
+        },
+        {
+          "name": "Activate Account (Dinas)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts/2/activate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts", "2", "activate"]
+            }
+          }
+        },
+        {
+          "name": "Delete Account (Dinas)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts", "2"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "pm.test('Response status is OK', () => {",
+                  "  const jsonData = pm.response.json();",
+                  "  pm.expect(jsonData.status).to.equal('OK');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "name": "Backend Pintarin",
   "version": "1.0.0",
-  "description": "Backed Pintarin",
+  "description": "Backend Pintarin",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -16,7 +16,10 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.5.2",
     "helmet": "^8.1.0",
     "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
@@ -25,10 +28,10 @@
     "pg": "^8.11.5"
   },
   "devDependencies": {
-    "eslint-config-prettier": "^10.1.8",
     "@eslint/js": "^10.0.1",
     "depcheck": "^1.4.7",
     "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
     "globals": "^17.6.0",
     "nodemon": "^3.1.0"
   }

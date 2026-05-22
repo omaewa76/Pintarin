@@ -1,0 +1,52 @@
+const InvariantError = require('../../exceptions/InvariantError');
+const {
+    overviewSchema,
+    riskTrendSchema,
+    districtRankingSchema,
+    assistanceSummarySchema,
+    schoolComparisonSchema
+} = require('./schema');
+
+const AnalyticsValidator = {
+    validateOverview: (query) => {
+        const result = overviewSchema.validate(query);
+        if (result.error) {
+            throw new InvariantError(result.error.message);
+        }
+        return result.value;
+    },
+
+    validateRiskTrend: (query) => {
+        const result = riskTrendSchema.validate(query);
+        if (result.error) {
+            throw new InvariantError(result.error.message);
+        }
+        return result.value;
+    },
+
+    validateDistrictRanking: (query) => {
+        const result = districtRankingSchema.validate(query);
+        if (result.error) {
+            throw new InvariantError(result.error.message);
+        }
+        return result.value;
+    },
+
+    validateAssistanceSummary: (query) => {
+        const result = assistanceSummarySchema.validate(query);
+        if (result.error) {
+            throw new InvariantError(result.error.message);
+        }
+        return result.value;
+    },
+
+    validateSchoolComparison: (payload) => {
+        const result = schoolComparisonSchema.validate(payload);
+        if (result.error) {
+            throw new InvariantError(result.error.message);
+        }
+        return result.value;
+    }
+};
+
+module.exports = AnalyticsValidator;
