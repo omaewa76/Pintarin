@@ -1,9 +1,9 @@
 // src/controllers/aiController.js
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
 const RiskScoreService = require('../services/postgres/RiskScoreService');
+const DistrictRiskService = require('../services/postgres/DistrictRiskService');
 const SchoolService = require('../services/postgres/SchoolService');
-const NotificationService = require('../services/postgres/NotificationService');
-const AIValidator = require('../validators/ai');
+const AIValidator = require('../validator/ai/index');
 
 // Simulasi model AI (untuk MVP, nanti bisa diganti dengan model sesungguhnya)
 const predictRiskScore = async (schoolData) => {

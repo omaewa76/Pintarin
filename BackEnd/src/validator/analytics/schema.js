@@ -1,3 +1,5 @@
+// src/validator/analytics/schema.js
+
 const Joi = require('joi');
 
 const overviewSchema = Joi.object({

@@ -1,3 +1,5 @@
+// src/middleware/auth.js
+
 const TokenManager = require('../tokenize/TokenManager');
 const { responseError } = require('../utils/errorHandler');
 

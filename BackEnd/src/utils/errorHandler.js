@@ -1,4 +1,6 @@
-const errorHandler = (err, req, res, next) => {
+// src/utils/errorHandler.js
+
+const errorHandler = (err, req, res) => {
     console.error('Unhandled error:', err);
 
     const statusCode = err.statusCode || 500;
@@ -33,8 +35,15 @@ const responseError = (res, message = 'Terjadi kesalahan', statusCode = 500, err
     return res.status(statusCode).json(response);
 };
 
+const asyncHandler = (fn) => {
+    return (req, res, next) => {
+        Promise.resolve(fn(req, res, next)).catch(next);
+    };
+};
+
 module.exports = {
     errorHandler,
     responseSuccess,
-    responseError
+    responseError,
+    asyncHandler
 };

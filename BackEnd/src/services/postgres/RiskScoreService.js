@@ -1,3 +1,5 @@
+// src/services/postgres/RiskScoreService.js
+
 const { query } = require('../../../config/db.config');
 const { mapRiskScoreDBToModel } = require('../../utils');
 

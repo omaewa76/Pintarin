@@ -16,7 +16,7 @@ const {
 const { authenticate } = require('../middleware/auth');
 const { requireDinas, requireCSR } = require('../middleware/roleCheck');
 const validationAdapter = require('../middleware/validationAdapter');
-const CSRValidator = require('../validator/csr');
+const CSRValidator = require('../validator/csr/index');
 
 const router = express.Router();
 

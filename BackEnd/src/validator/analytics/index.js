@@ -1,3 +1,5 @@
+// src/validator/analytics/index.js
+
 const InvariantError = require('../../exceptions/InvariantError');
 const {
     overviewSchema,

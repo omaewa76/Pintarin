@@ -1,8 +1,8 @@
-// config/auth.js
+// config/auth.config.js
 
 require('dotenv').config();
 const bcrypt = require('bcrypt');
-const TokenManager = require('../tokenize/TokenManager');
+const TokenManager = require('../src/tokenize/TokenManager');
 
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS) || 10;
 
@@ -14,7 +14,7 @@ const comparePassword = async (password, hash) => {
     return await bcrypt.compare(password, hash);
 };
 
-const generateRandomString = (length = parseInt(process.env.RANDOM_LENGTH) || 32) => {
+const generateRandomString = (length = parseInt(process.env.RANDOM_LENGTH) || 16) => {
     const crypto = require('crypto');
     return crypto.randomBytes(length).toString('hex');
 };

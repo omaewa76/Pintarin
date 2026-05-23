@@ -8,7 +8,7 @@ const {
 } = require('../controllers/districtController');
 const { authenticate } = require('../middleware/auth');
 const validationAdapter = require('../middleware/validationAdapter');
-const DistrictValidator = require('../validator/district');
+const DistrictValidator = require('../validator/district/index');
 
 const router = express.Router();
 

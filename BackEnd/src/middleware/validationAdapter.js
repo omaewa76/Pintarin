@@ -1,3 +1,5 @@
+// src/middleware/validationAdapter.js
+
 const { responseError } = require('../utils/errorHandler');
 
 const validationAdapter = (validator, source = 'body') => {

@@ -1,7 +1,7 @@
-const { query } = require('../config/database');
-const { comparePassword, generateTokenPair, blacklistToken, refreshAccessToken } = require('../config/auth');
+// const { query } = require('../../config/db.config');
+const { comparePassword, generateTokenPair, blacklistToken, refreshAccessToken } = require('../../config/auth.config');
 const { responseSuccess, responseError } = require('../utils/errorHandler');
-const AuthValidator = require('../validators/auth');
+const AuthValidator = require('../validator/auth/index');
 const UserService = require('../services/postgres/UserService');
 const NotificationService = require('../services/postgres/NotificationService');
 
@@ -125,9 +125,24 @@ const getMe = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    return responseError(res, 'Fitur change password akan segera tersedia', 501);
+};
+
+const forgotPassword = async (req, res) => {
+    return responseError(res, 'Fitur forgot password akan segera tersedia', 501);
+};
+
+const resetPassword = async (req, res) => {
+    return responseError(res, 'Fitur reset password akan segera tersedia', 501);
+};
+
 module.exports = {
     login,
     logout,
     refreshToken,
-    getMe
+    getMe,
+    changePassword,
+    forgotPassword,
+    resetPassword
 };

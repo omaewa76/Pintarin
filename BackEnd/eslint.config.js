@@ -6,6 +6,7 @@ const eslintConfigPrettier = require('eslint-config-prettier');
 // Konfigurasi ESLint untuk proyek Node.js dengan aturan yang disesuaikan
 module.exports = [
   // Menggunakan konfigurasi dasar dari ESLint untuk JavaScript
+
   js.configs.recommended,
   {
     // Menentukan lingkungan dan aturan untuk kode Node.js

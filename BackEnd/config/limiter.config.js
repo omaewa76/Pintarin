@@ -1,3 +1,5 @@
+// config/limiter.config.js
+
 const rateLimit = require('express-rate-limit');
 
 const defaultConfig = {
@@ -119,11 +121,11 @@ const createCustomLimiter = (windowMs, max, message = null) => {
 const roleBasedLimiter = (req, res, next) => {
   const role = req.user?.role;
   let limit = 100;
-  
+
   if (role === 'dinas') limit = 200;
   else if (role === 'csr') limit = 150;
   else if (role === 'sekolah') limit = 100;
-  
+
   const limiter = rateLimit({
     ...defaultConfig,
     max: limit,
@@ -134,7 +136,7 @@ const roleBasedLimiter = (req, res, next) => {
       timestamp: new Date().toISOString()
     }
   });
-  
+
   return limiter(req, res, next);
 };
 

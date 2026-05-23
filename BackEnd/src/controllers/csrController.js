@@ -2,7 +2,7 @@ const { responseSuccess, responseError } = require('../utils/errorHandler');
 const CSRCompanyService = require('../services/postgres/CSRCompanyService');
 const AssistanceRequestService = require('../services/postgres/AssistanceRequestService');
 const NotificationService = require('../services/postgres/NotificationService');
-const CSRValidator = require('../validators/csr');
+const CSRValidator = require('../validator/csr/index');
 
 const getAllCompanies = async (req, res) => {
     try {
@@ -154,11 +154,36 @@ const rejectAssistanceRequest = async (req, res) => {
     }
 };
 
+const getCompanyById = async (req, res) => {
+    return responseError(res, 'Fitur get company by id akan segera tersedia', 501);
+};
+
+const createCompany = async (req, res) => {
+    return responseError(res, 'Fitur create company akan segera tersedia', 501);
+};
+
+const updateCompany = async (req, res) => {
+    return responseError(res, 'Fitur update company akan segera tersedia', 501);
+};
+
+const deleteCompany = async (req, res) => {
+    return responseError(res, 'Fitur delete company akan segera tersedia', 501);
+};
+
+const completeAssistanceRequest = async (req, res) => {
+    return responseError(res, 'Fitur complete assistance request akan segera tersedia', 501);
+};
+
 module.exports = {
     getAllCompanies,
     getAllAssistanceRequests,
     getAssistanceRequestById,
     createAssistanceRequest,
     approveAssistanceRequest,
-    rejectAssistanceRequest
+    rejectAssistanceRequest,
+    getCompanyById,
+    createCompany,
+    updateCompany,
+    deleteCompany,
+    completeAssistanceRequest
 };

@@ -1,3 +1,5 @@
+// src/services/postgres/SchoolService.js
+
 const { query } = require('../../../config/db.config');
 const { mapSchoolDBToModel } = require('../../utils');
 

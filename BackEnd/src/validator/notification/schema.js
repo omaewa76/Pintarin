@@ -1,3 +1,5 @@
+// src/validator/notification/index.js
+
 const Joi = require('joi');
 
 const notificationQuerySchema = Joi.object({

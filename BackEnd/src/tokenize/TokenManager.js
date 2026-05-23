@@ -10,6 +10,7 @@ class TokenManager {
         this.refreshTokenKey = jwtConfig.refreshTokenKey;
         this.accessTokenExpiry = jwtConfig.accessTokenExpiry;
         this.refreshTokenExpiry = jwtConfig.refreshTokenExpiry;
+        this.randomLength = jwtConfig.randomLength;
         this.blacklistedTokens = new Set();
     }
 
@@ -27,7 +28,7 @@ class TokenManager {
         const refreshPayload = {
             ...payload,
             type: 'refresh',
-            fingerprint: crypto.randomBytes(16).toString('hex')
+            fingerprint: crypto.randomBytes(this.randomLength).toString('hex')
         };
 
         return jwt.sign(refreshPayload, this.refreshTokenKey, {
@@ -136,7 +137,7 @@ class TokenManager {
     // Blacklist token
     blacklistToken(token, tokenType = 'access') {
         try {
-            const secretKey = tokenType === 'access' ? this.accessTokenKey : this.refreshTokenKey;
+            // const secretKey = tokenType === 'access' ? this.accessTokenKey : this.refreshTokenKey;
             const decoded = jwt.decode(token);
 
             if (decoded && decoded.exp) {
@@ -241,7 +242,7 @@ class TokenManager {
             user_id: userId,
             email: email,
             type: 'email_verification',
-            fingerprint: crypto.randomBytes(16).toString('hex')
+            fingerprint: crypto.randomBytes(this.randomLength).toString('hex')
         };
 
         return jwt.sign(payload, this.accessTokenKey, {

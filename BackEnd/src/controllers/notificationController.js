@@ -1,7 +1,7 @@
 // src/controllers/notificationController.js
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
 const NotificationService = require('../services/postgres/NotificationService');
-const NotificationValidator = require('../validators/notification');
+const NotificationValidator = require('../validator/notification/index');
 
 const getNotifications = asyncHandler(async (req, res) => {
     const validated = NotificationValidator.validateNotificationQuery(req.query);

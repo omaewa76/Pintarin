@@ -1,3 +1,5 @@
+// src/vaidator/index.js
+
 const AuthValidator = require('./auth');
 const SchoolValidator = require('./school');
 const SubmissionValidator = require('./submission');

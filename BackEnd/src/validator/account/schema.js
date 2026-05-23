@@ -1,3 +1,5 @@
+// src/validator/account/schema.js
+
 const Joi = require('joi');
 
 const accountQuerySchema = Joi.object({

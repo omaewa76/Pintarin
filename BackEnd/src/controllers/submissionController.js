@@ -3,7 +3,7 @@ const { responseSuccess, responseError, asyncHandler } = require('../utils/error
 const SubmissionService = require('../services/postgres/SubmissionService');
 const SchoolService = require('../services/postgres/SchoolService');
 const NotificationService = require('../services/postgres/NotificationService');
-const SubmissionValidator = require('../validators/submission');
+const SubmissionValidator = require('../validator/submission/index');
 
 const getAllSubmissions = asyncHandler(async (req, res) => {
     const validated = SubmissionValidator.validateSubmissionQuery(req.query);

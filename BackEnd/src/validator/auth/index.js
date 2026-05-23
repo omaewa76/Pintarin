@@ -1,3 +1,5 @@
+// src/validator/auth/index.js
+
 const InvariantError = require('../../exceptions/InvariantError');
 const {
     loginSchema,

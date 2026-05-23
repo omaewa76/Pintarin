@@ -1,10 +1,11 @@
 // src/controllers/analyticsController.js
-const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
+const { responseSuccess, asyncHandler } = require('../utils/errorHandler');
 const RiskScoreService = require('../services/postgres/RiskScoreService');
 const DistrictRiskService = require('../services/postgres/DistrictRiskService');
 const AssistanceRequestService = require('../services/postgres/AssistanceRequestService');
 const SchoolService = require('../services/postgres/SchoolService');
-const AnalyticsValidator = require('../validators/analytics');
+const SubmissionService = require('../services/postgres/SubmissionService')
+const AnalyticsValidator = require('../validator/analytics/index');
 
 const getOverview = asyncHandler(async (req, res) => {
     const validated = AnalyticsValidator.validateOverview(req.query);

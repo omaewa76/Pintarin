@@ -1,3 +1,5 @@
+// src/validator/school/index.js
+
 const InvariantError = require('../../exceptions/InvariantError');
 const {
     schoolQuerySchema,

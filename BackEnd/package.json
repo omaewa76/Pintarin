@@ -1,5 +1,5 @@
 {
-  "name": "Backend Pintarin",
+  "name": "be_pintarin",
   "version": "1.0.0",
   "description": "Backend Pintarin",
   "main": "src/server.js",
@@ -11,6 +11,11 @@
     "migrate:up": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
     "migrate:redo": "node-pg-migrate redo",
+    "migrate:dev": "node scripts/migrate.js",
+    "migrate:dev:create": "node scripts/migrate.js create",
+    "migrate:dev:up": "node scripts/migrate.js up",
+    "migrate:dev:down": "node scripts/migrate.js down",
+    "migrate:dev:redo": "node scripts/migrate.js redo",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -21,11 +26,15 @@
     "express": "^4.19.2",
     "express-rate-limit": "^8.5.2",
     "helmet": "^8.1.0",
+    "hpp": "^0.2.3",
     "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
     "nanoid": "^3.3.7",
     "node-pg-migrate": "^8.0.4",
-    "pg": "^8.11.5"
+    "perfect-express-sanitizer": "^2.0.2",
+    "pg": "^8.11.5",
+    "sanitize": "^2.1.2",
+    "xss-clean": "^0.1.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

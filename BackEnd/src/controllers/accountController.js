@@ -1,9 +1,9 @@
 // src/controllers/accountController.js
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
 const UserService = require('../services/postgres/UserService');
-const { hashPassword } = require('../config/auth');
+const { hashPassword } = require('../../config/auth.config');
 const NotificationService = require('../services/postgres/NotificationService');
-const AccountValidator = require('../validators/account');
+const AccountValidator = require('../validator/account/index');
 
 const getAllAccounts = asyncHandler(async (req, res) => {
     // Hanya Dinas yang bisa melihat semua akun

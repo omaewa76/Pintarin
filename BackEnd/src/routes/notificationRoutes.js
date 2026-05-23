@@ -11,7 +11,7 @@ const {
 const { authenticate } = require('../middleware/auth');
 const { requireDinas } = require('../middleware/roleCheck');
 const validationAdapter = require('../middleware/validationAdapter');
-const NotificationValidator = require('../validator/notification');
+const NotificationValidator = require('../validator/notification/index');
 
 const router = express.Router();
 

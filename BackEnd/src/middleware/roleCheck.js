@@ -1,3 +1,5 @@
+// src/middleware/roleCheck.js
+
 const { responseError } = require('../utils/errorHandler');
 
 const requireRole = (...allowedRoles) => {

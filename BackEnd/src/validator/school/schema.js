@@ -1,3 +1,5 @@
+// src/validator/school/index.js
+
 const Joi = require('joi');
 
 const schoolQuerySchema = Joi.object({

@@ -1,3 +1,5 @@
+// src/validator/auth/index.js
+
 const Joi = require('joi');
 
 const loginSchema = Joi.object({

@@ -1,7 +1,7 @@
 const { responseSuccess, responseError } = require('../utils/errorHandler');
 const SchoolService = require('../services/postgres/SchoolService');
 const RiskScoreService = require('../services/postgres/RiskScoreService');
-const SchoolValidator = require('../validators/school');
+const SchoolValidator = require('../validator/school/index');
 
 const getAllSchools = async (req, res) => {
     try {
@@ -69,9 +69,24 @@ const getSchoolRiskHistory = async (req, res) => {
     }
 };
 
+const createSchool = async (req, res) => {
+    return responseError(res, 'Fitur create school akan segera tersedia', 501);
+};
+
+const updateSchool = async (req, res) => {
+    return responseError(res, 'Fitur update school akan segera tersedia', 501);
+};
+
+const deleteSchool = async (req, res) => {
+    return responseError(res, 'Fitur delete school akan segera tersedia', 501);
+};
+
 module.exports = {
     getAllSchools,
     getSchoolById,
     verifySchool,
-    getSchoolRiskHistory
+    getSchoolRiskHistory,
+    createSchool,
+    updateSchool,
+    deleteSchool
 };

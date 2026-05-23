@@ -170,28 +170,28 @@ const mapNotificationDBToModel = (dbRow) => ({
 module.exports = {
   // Kecamatan
   mapDistrictDBToModel,
-  
+
   // Perusahaan CSR
   mapCSRCompanyDBToModel,
-  
+
   // Sekolah
   mapSchoolDBToModel,
-  
+
   // Pengguna
   mapUserDBToModel,
   mapUserAuthToModel,
   mapUserLoginResponse,
-  
+
   // Skor Risiko
   mapRiskScoreDBToModel,
   mapDistrictRiskDBToModel,
-  
+
   // Pengajuan Bantuan
   mapAssistanceRequestDBToModel,
-  
+
   // Pengajuan Perubahan Data
   mapSubmissionDBToModel,
-  
+
   // Notifikasi
   mapNotificationDBToModel
 };

@@ -1,18 +1,16 @@
+// commonjs
+
 /**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
  */
-export const shorthands = {
-    id: { type: 'serial', primaryKey: true },
-    created_at: { type: 'timestamp', notNull: true, default: 'CURRENT_TIMESTAMP' },
-    updated_at: { type: 'timestamp', notNull: true, default: 'CURRENT_TIMESTAMP' }
-};
+exports.shorthands = undefined;
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
-export const up = (pgm) => {
+exports.up = (pgm) => {
 
     // Membuat jenis data enumerasi untuk mengelompokkan pilihan yang tersedia dalam sistem
     pgm.createType('role_pengguna', ['dinas', 'sekolah', 'csr']);
@@ -45,8 +43,8 @@ export const up = (pgm) => {
         telepon_kontak: { type: 'varchar(20)' },
         alamat_kantor: { type: 'text' },
         sudah_diverifikasi: { type: 'boolean', default: false },
-        created_at: 'created_at',
-        updated_at: 'updated_at'
+        created_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
+        updated_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
     });
 
     // Membangun tabel sekolah sebagai entitas utama penerima manfaat
@@ -71,8 +69,8 @@ export const up = (pgm) => {
         nama_kepala_sekolah: { type: 'varchar(100)' },
         status_operasional: { type: 'status_sekolah', default: 'Aktif' },
         data_terverifikasi: { type: 'boolean', default: false },
-        created_at: 'created_at',
-        updated_at: 'updated_at'
+        created_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
+        updated_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
     });
 
     // Membangun tabel pengguna sebagai entitas pengakses sistem
@@ -85,8 +83,8 @@ export const up = (pgm) => {
         sekolah_id: { type: 'integer', references: 'sekolah(id)', onDelete: 'SET NULL' },
         perusahaan_csr_id: { type: 'integer', references: 'perusahaan_csr(id)', onDelete: 'SET NULL' },
         akun_aktif: { type: 'boolean', default: true },
-        created_at: 'created_at',
-        updated_at: 'updated_at'
+        created_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
+        updated_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
     });
 
     // Membangun tabel skor risiko sekolah sebagai hasil analisis kecenderungan kerentanan
@@ -96,7 +94,10 @@ export const up = (pgm) => {
         nilai_skor: { type: 'decimal(5,2)', notNull: true },
         kategori_risiko: { type: 'kategori_risiko', notNull: true },
         versi_model_ai: { type: 'varchar(20)', notNull: true },
-        waktu_perhitungan: { type: 'timestamp', notNull: true, default: 'CURRENT_TIMESTAMP' },
+        waktu_perhitungan: {
+            type: 'timestamp', notNull: true,
+            default: pgm.func('CURRENT_TIMESTAMP')
+        },
         data_fitur_saat_itu: { type: 'jsonb' }
     });
 
@@ -106,7 +107,10 @@ export const up = (pgm) => {
         kecamatan_id: { type: 'integer', notNull: true, references: 'kecamatan(id)', onDelete: 'CASCADE' },
         rata_rata_skor: { type: 'decimal(5,2)', notNull: true },
         jumlah_risiko_tinggi: { type: 'integer', notNull: true, default: 0 },
-        waktu_perhitungan: { type: 'timestamp', notNull: true, default: 'CURRENT_TIMESTAMP' },
+        waktu_perhitungan: {
+            type: 'timestamp', notNull: true,
+            default: pgm.func('CURRENT_TIMESTAMP')
+        },
         versi_model_ai: { type: 'varchar(20)', notNull: true }
     });
 
@@ -122,8 +126,8 @@ export const up = (pgm) => {
         diverifikasi_oleh: { type: 'integer', references: 'pengguna(id)', onDelete: 'SET NULL' },
         waktu_verifikasi: { type: 'timestamp' },
         alasan_ditolak: { type: 'text' },
-        created_at: 'created_at',
-        updated_at: 'updated_at'
+        created_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
+        updated_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
     });
 
     // Membangun tabel pengajuan perubahan data sebagai riwayat pembaruan informasi sekolah
@@ -137,7 +141,7 @@ export const up = (pgm) => {
         status_pengajuan: { type: 'status_submission', notNull: true, default: 'Pending' },
         diverifikasi_oleh: { type: 'integer', references: 'pengguna(id)', onDelete: 'SET NULL' },
         waktu_verifikasi: { type: 'timestamp' },
-        created_at: 'created_at'
+        created_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
     });
 
     // Membangun tabel notifikasi sebagai sistem pemberitahuan dalam aplikasi
@@ -149,7 +153,21 @@ export const up = (pgm) => {
         tipe_notifikasi: { type: 'tipe_notifikasi', notNull: true, default: 'info' },
         sudah_dibaca: { type: 'boolean', default: false },
         tautan_terkait: { type: 'varchar(255)' },
-        created_at: 'created_at'
+        created_at: { type: 'TIMESTAMPTZ', default: pgm.func('CURRENT_TIMESTAMP') },
+    });
+
+    pgm.createTable('password_reset_tokens', {
+        id: 'id',
+        user_id: {
+            type: 'integer',
+            notNull: true,
+            references: 'pengguna(id)',
+            onDelete: 'CASCADE'
+        },
+        token: { type: 'varchar(255)', notNull: true },
+        expires_at: { type: 'timestamp', notNull: true },
+        used: { type: 'boolean', default: false },
+        created_at: { type: 'timestamp', default: pgm.func('CURRENT_TIMESTAMP') }
     });
 
     // Membangun indeks untuk mengoptimalkan kinerja pencarian data pada tabel-tabel utama
@@ -170,6 +188,9 @@ export const up = (pgm) => {
     pgm.createIndex('notifikasi', 'created_at', { name: 'idx_notifikasi_tanggal' });
     pgm.createIndex('pengajuan_perubahan_data', 'sekolah_id', { name: 'idx_perubahan_sekolah' });
     pgm.createIndex('pengajuan_perubahan_data', 'status_pengajuan', { name: 'idx_perubahan_status' });
+    pgm.createIndex('password_reset_tokens', 'token');
+    pgm.createIndex('password_reset_tokens', 'user_id');
+    pgm.createConstraint('password_reset_tokens', 'unique_user_id', 'UNIQUE(user_id)');
 
     console.log('Migrasi berhasil dijalankan. Seluruh struktur database telah terbangun.');
 };
@@ -179,9 +200,12 @@ export const up = (pgm) => {
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
-export const down = (pgm) => {
+
+exports.down = (pgm) => {
     console.log('Proses rollback dimulai. Menghapus seluruh struktur database...');
 
+    // Hapus tabel
+    pgm.dropTable('password_reset_tokens');
     pgm.dropTable('notifikasi');
     pgm.dropTable('pengajuan_perubahan_data');
     pgm.dropTable('pengajuan_bantuan');
@@ -192,6 +216,7 @@ export const down = (pgm) => {
     pgm.dropTable('perusahaan_csr');
     pgm.dropTable('kecamatan');
 
+    // Hapus type 
     pgm.dropType('tipe_notifikasi');
     pgm.dropType('status_submission');
     pgm.dropType('status_pengajuan');

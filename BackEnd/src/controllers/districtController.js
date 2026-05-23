@@ -2,7 +2,7 @@
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
 const DistrictService = require('../services/postgres/DistrictService');
 const DistrictRiskService = require('../services/postgres/DistrictRiskService');
-const DistrictValidator = require('../validators/district');
+const DistrictValidator = require('../validator/district/index');
 
 const getAllDistricts = asyncHandler(async (req, res) => {
     const validated = DistrictValidator.validateDistrictQuery(req.query);

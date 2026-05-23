@@ -10,7 +10,7 @@ const {
 const { authenticate } = require('../middleware/auth');
 const { requireDinas } = require('../middleware/roleCheck');
 const validationAdapter = require('../middleware/validationAdapter');
-const AnalyticsValidator = require('../validator/analytics');
+const AnalyticsValidator = require('../validator/analytics/index');
 
 const router = express.Router();
 

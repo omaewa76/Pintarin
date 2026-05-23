@@ -3,13 +3,12 @@ const express = require('express');
 const {
     predictRisk,
     batchPredict,
-    getInsights,
-    trainModel
+    getInsights
 } = require('../controllers/aiController');
 const { authenticate } = require('../middleware/auth');
 const { requireDinas } = require('../middleware/roleCheck');
 const validationAdapter = require('../middleware/validationAdapter');
-const AIValidator = require('../validator/ai');
+const AIValidator = require('../validator/ai/index');
 
 const router = express.Router();
 
@@ -35,14 +34,6 @@ router.get('/insights',
     requireDinas,
     validationAdapter(AIValidator.validateGetInsights, 'query'),
     getInsights
-);
-
-// Training ulang model AI (opsional)
-router.post('/train',
-    authenticate,
-    requireDinas,
-    validationAdapter(AIValidator.validateTrainModel, 'body'),
-    trainModel
 );
 
 module.exports = router;

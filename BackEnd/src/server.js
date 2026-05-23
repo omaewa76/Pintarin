@@ -1,7 +1,13 @@
+// src/server.js
+
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const hpp = require('hpp');
+const xss = require('xss-clean');
+const sanitize = require('perfect-express-sanitizer');
 
 const { connectDB } = require('../config/db.config');
 const { errorHandler } = require('./utils/errorHandler');
@@ -24,7 +30,20 @@ const PORT = parseInt(process.env.PORT) || 3000;
 connectDB();
 
 app.use(helmet());
+app.use(hpp());
+app.use(xss());
 app.use(cors());
+app.use(sanitize.clean(
+  {
+    xss: true,
+    sql: true,
+    sanitizeKeys: true
+  },
+  [
+    "body",
+    "query"
+  ],
+))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
