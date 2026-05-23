@@ -1,0 +1,1273 @@
+{
+  "info": {
+    "name": "Pintarin API Testing - Complete",
+    "description": "Mencakup Functional, Integration, Regression, dan Security Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Functional Testing",
+      "item": [
+        {
+          "name": "Auth Endpoints",
+          "item": [
+            {
+              "name": "[FUNCTIONAL] Login Success",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response has success true', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.success).to.be.true;",
+                      "});",
+                      "",
+                      "pm.test('Response contains access_token', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.have.property('access_token');",
+                      "    pm.expect(jsonData.data.access_token).to.be.a('string');",
+                      "});",
+                      "",
+                      "pm.test('Response contains refresh_token', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.have.property('refresh_token');",
+                      "});",
+                      "",
+                      "pm.test('Response contains user data', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data.user).to.have.property('id');",
+                      "    pm.expect(jsonData.data.user).to.have.property('email');",
+                      "    pm.expect(jsonData.data.user).to.have.property('role');",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "if (jsonData.data && jsonData.data.access_token) {",
+                      "    pm.environment.set('accessToken', jsonData.data.access_token);",
+                      "}",
+                      "if (jsonData.data && jsonData.data.refresh_token) {",
+                      "    pm.environment.set('refreshToken', jsonData.data.refresh_token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"admin@dinas.com\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/login",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[FUNCTIONAL] Get Current User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response has success true', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.success).to.be.true;",
+                      "});",
+                      "",
+                      "pm.test('Response contains user data', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.have.property('id');",
+                      "    pm.expect(jsonData.data).to.have.property('email');",
+                      "    pm.expect(jsonData.data).to.have.property('role');",
+                      "    pm.expect(jsonData.data).to.have.property('name');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/me",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[FUNCTIONAL] Logout",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response has success true', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.success).to.be.true;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/logout",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "logout"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "School Endpoints",
+          "item": [
+            {
+              "name": "[FUNCTIONAL] Get All Schools",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response has success true', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.success).to.be.true;",
+                      "});",
+                      "",
+                      "pm.test('Response contains data array', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.be.an('array');",
+                      "});",
+                      "",
+                      "pm.test('Response contains pagination', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.pagination).to.have.property('page');",
+                      "    pm.expect(jsonData.pagination).to.have.property('limit');",
+                      "    pm.expect(jsonData.pagination).to.have.property('total');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/schools?page=1&limit=10",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "schools"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[FUNCTIONAL] Get School By ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response contains school data', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.have.property('id');",
+                      "    pm.expect(jsonData.data).to.have.property('name');",
+                      "    pm.expect(jsonData.data).to.have.property('npsn');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/schools/1",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "schools",
+                    "1"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "District Endpoints",
+          "item": [
+            {
+              "name": "[FUNCTIONAL] Get All Districts",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response contains districts array', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.be.an('array');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/districts",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "districts"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "CSR Endpoints",
+          "item": [
+            {
+              "name": "[FUNCTIONAL] Get CSR Companies",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response contains companies array', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.be.an('array');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/csr/companies",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "csr",
+                    "companies"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analytics Endpoints",
+          "item": [
+            {
+              "name": "[FUNCTIONAL] Get Overview Stats",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response contains statistics data', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.have.property('schools');",
+                      "    pm.expect(jsonData.data).to.have.property('risk');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/analytics/overview",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "overview"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Notification Endpoints",
+          "item": [
+            {
+              "name": "[FUNCTIONAL] Get Notifications",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "pm.test('Response contains notifications array', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data).to.be.an('array');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/notifications",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "notifications"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Integration Testing",
+      "item": [
+        {
+          "name": "[INTEGRATION] Complete Auth Flow",
+          "item": [
+            {
+              "name": "Step 1: Login - Get Token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Login successful', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "if (jsonData.data && jsonData.data.access_token) {",
+                      "    pm.environment.set('accessToken', jsonData.data.access_token);",
+                      "    pm.environment.set('refreshToken', jsonData.data.refresh_token);",
+                      "}",
+                      "",
+                      "pm.test('Access token is set', function() {",
+                      "    pm.expect(pm.environment.get('accessToken')).to.not.be.empty;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"admin@dinas.com\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/login",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Step 2: Access Protected Endpoint",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Can access protected endpoint with token', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/me",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Step 3: Logout",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Logout successful', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/logout",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "logout"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "[INTEGRATION] School Data Flow",
+          "item": [
+            {
+              "name": "Step 1: Login as School",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Login as school successful', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "if (jsonData.data && jsonData.data.access_token) {",
+                      "    pm.environment.set('schoolToken', jsonData.data.access_token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"sekolah1@example.com\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/login",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Step 2: Create Submission",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Create submission successful', function() {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "if (jsonData.data && jsonData.data.id) {",
+                      "    pm.environment.set('submissionId', jsonData.data.id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{schoolToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"update_type\": \"Perubahan Data Siswa\",\n    \"data_after\": {\n        \"studentCount\": 450\n    }\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/submissions",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "submissions"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Step 3: Verify Submission Created",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Submission exists', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.data.id).to.equal(parseInt(pm.environment.get('submissionId')));",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{schoolToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/submissions/{{submissionId}}",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "submissions",
+                    "{{submissionId}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "[INTEGRATION] CSR Assistance Flow",
+          "item": [
+            {
+              "name": "Step 1: Login as CSR",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Login as CSR successful', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "if (jsonData.data && jsonData.data.access_token) {",
+                      "    pm.environment.set('csrToken', jsonData.data.access_token);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"csr1@example.com\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/login",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Step 2: Create Assistance Request",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Create assistance request successful', function() {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "if (jsonData.data && jsonData.data.id) {",
+                      "    pm.environment.set('assistanceId', jsonData.data.id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{csrToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"school_id\": 1,\n    \"type\": \"Infrastruktur\",\n    \"description\": \"Bantuan renovasi ruang kelas\",\n    \"amount\": 50000000\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/csr/assistance",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "csr",
+                    "assistance"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Regression Testing",
+      "item": [
+        {
+          "name": "[REGRESSION] Run All Functional Tests",
+          "description": "Folder ini berisi semua functional test yang bisa dijalankan berulang untuk memastikan tidak ada kerusakan setelah perubahan kode",
+          "item": [
+            {
+              "name": "REGRESSION: Auth Endpoints",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/me",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "REGRESSION: Schools Endpoint",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{BASE_URL}}/api/schools",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "schools"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "REGRESSION: Districts Endpoint",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{BASE_URL}}/api/districts",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "districts"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "REGRESSION: CSR Companies Endpoint",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{BASE_URL}}/api/csr/companies",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "csr",
+                    "companies"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "REGRESSION: Analytics Overview Endpoint",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{BASE_URL}}/api/analytics/overview",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "analytics",
+                    "overview"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "REGRESSION: Health Check",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Health check returns OK', function() {",
+                      "    pm.response.to.have.status(200);",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.status).to.equal('OK');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{BASE_URL}}/health",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Security Testing",
+      "item": [
+        {
+          "name": "[SECURITY] Token Validation",
+          "item": [
+            {
+              "name": "Access without token should return 401",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 401 Unauthorized', function() {",
+                      "    pm.response.to.have.status(401);",
+                      "});",
+                      "",
+                      "pm.test('Response indicates missing token', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.success).to.be.false;",
+                      "    pm.expect(jsonData.message).to.include('Token');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{BASE_URL}}/api/schools",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "schools"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Access with invalid token should return 401",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 401 Unauthorized', function() {",
+                      "    pm.response.to.have.status(401);",
+                      "});",
+                      "",
+                      "pm.test('Response indicates invalid token', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.message).to.include('Token');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer invalid_token_12345"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/schools",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "schools"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Access with expired token pattern (simulated)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Should return 401 for expired/invalid token', function() {",
+                      "    pm.expect(pm.response.code === 401).to.be.true;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDAwMDAwMDB9.invalid"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/me",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "[SECURITY] Role Based Access Control",
+          "item": [
+            {
+              "name": "School role cannot access admin endpoint",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 403 Forbidden', function() {",
+                      "    pm.response.to.have.status(403);",
+                      "});",
+                      "",
+                      "pm.test('Response indicates access denied', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.message).to.include('Akses');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/accounts",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "accounts"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "[SECURITY] Input Validation",
+          "item": [
+            {
+              "name": "Login with SQL injection attempt",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('SQL injection should be handled safely', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(pm.response.code === 400 || pm.response.code === 401).to.be.true;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"' OR '1'='1\",\n    \"password\": \"' OR '1'='1\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/login",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Login with XSS payload",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('XSS payload should be sanitized', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.expect(jsonData.message).to.not.include('<script>');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"<script>alert('xss')</script>\",\n    \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/login",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "[SECURITY] Data Exposure",
+          "item": [
+            {
+              "name": "Password should not be exposed in response",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Password hash not exposed in response', function() {",
+                      "    var jsonData = pm.response.json();",
+                      "    var responseString = JSON.stringify(jsonData);",
+                      "    pm.expect(responseString).to.not.include('password');",
+                      "    pm.expect(responseString).to.not.include('kata_sandi');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/auth/me",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "me"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "schoolToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "csrToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "submissionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "assistanceId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
