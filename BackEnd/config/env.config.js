@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const HOST = process.env.HOST;
 const PORT = process.env.PORT;
 const SALT_ROUNDS = process.env.SALT_ROUNDS;
