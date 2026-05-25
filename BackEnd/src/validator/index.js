@@ -1,14 +1,15 @@
-// src/vaidator/index.js
+// src/validator/index.js
 
-const AuthValidator = require('./auth');
-const SchoolValidator = require('./school');
-const SubmissionValidator = require('./submission');
-const DistrictValidator = require('./district');
-const CSRValidator = require('./csr');
-const AnalyticsValidator = require('./analytics');
-const AIValidator = require('./ai');
-const NotificationValidator = require('./notification');
-const AccountValidator = require('./account');
+const AuthValidator = require('./auth/index.js');
+const SchoolValidator = require('./school/index.js');
+const SubmissionValidator = require('./submission/index.js');
+const DistrictValidator = require('./district/index.js');
+const CSRValidator = require('./csr/index.js');
+const AnalyticsValidator = require('./analytics/index.js');
+const AIValidator = require('./ai/index.js');
+const NotificationValidator = require('./notification/index.js');
+const AccountValidator = require('./account/index.js');
+const PredictionValidator = require('./predictions/index.js');
 
 module.exports = {
   AuthValidator,
@@ -19,5 +20,6 @@ module.exports = {
   AnalyticsValidator,
   AIValidator,
   NotificationValidator,
-  AccountValidator
+  AccountValidator,
+  PredictionValidator,
 };

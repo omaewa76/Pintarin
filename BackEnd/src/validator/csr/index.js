@@ -11,11 +11,11 @@ const {
     createAssistanceSchema,
     approveAssistanceSchema,
     rejectAssistanceSchema,
-    completeAssistanceSchema
+    completeAssistanceSchema,
+    csrMatchSchema
 } = require('./schema');
 
 const CSRValidator = {
-    // Company validators
     validateCompanyQuery: (query) => {
         const result = companyQuerySchema.validate(query);
         if (result.error) {
@@ -48,7 +48,6 @@ const CSRValidator = {
         return result.value;
     },
 
-    // Assistance validators
     validateAssistanceQuery: (query) => {
         const result = assistanceQuerySchema.validate(query);
         if (result.error) {
@@ -93,6 +92,15 @@ const CSRValidator = {
     validateCompleteAssistance: (params, body) => {
         const combined = { ...params, ...body };
         const result = completeAssistanceSchema.validate(combined);
+        if (result.error) {
+            throw new InvariantError(result.error.message);
+        }
+        return result.value;
+    },
+
+    // CSR MATCHING VALIDATOR 
+    validateMatchDistricts: (payload) => {
+        const result = csrMatchSchema.validate(payload);
         if (result.error) {
             throw new InvariantError(result.error.message);
         }

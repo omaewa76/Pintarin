@@ -135,9 +135,8 @@ class TokenManager {
     }
 
     // Blacklist token
-    blacklistToken(token, tokenType = 'access') {
+    blacklistToken(token) {
         try {
-            // const secretKey = tokenType === 'access' ? this.accessTokenKey : this.refreshTokenKey;
             const decoded = jwt.decode(token);
 
             if (decoded && decoded.exp) {
