@@ -1,8 +1,10 @@
-// src/controllers/notificationController.js
+// src/controllers/notification.js
+
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
-const NotificationService = require('../services/postgres/Notification');
+const NotificationService = require('../services/postgres/notification');
 const NotificationValidator = require('../validator/notification/index');
 
+// Controller untuk manajemen notifikasi pengguna, termasuk peng
 const getNotifications = asyncHandler(async (req, res) => {
     const validated = NotificationValidator.validateNotificationQuery(req.query);
 
@@ -56,7 +58,6 @@ const getUnreadCount = asyncHandler(async (req, res) => {
 });
 
 const broadcastNotification = asyncHandler(async (req, res) => {
-    // Hanya Dinas yang bisa broadcast
     if (req.user.role !== 'dinas') {
         return responseError(res, 'Akses ditolak. Hanya admin Dinas yang bisa broadcast.', 403);
     }

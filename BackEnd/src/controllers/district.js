@@ -1,9 +1,10 @@
-// src/controllers/districtController.js
+// src/controllers/district.js
+
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
-const DistrictService = require('../services/postgres/District');
-const DistrictRiskService = require('../services/postgres/DistrictRisk');
+const { DistrictService, DistrictRiskService } = require('../services/postgres');
 const DistrictValidator = require('../validator/district/index');
 
+// Controller untuk manajemen data kecamatan, termasuk pengambilan data kecamatan, detail kecamatan, history risiko, dan ranking kecamatan berdasarkan risiko
 const getAllDistricts = asyncHandler(async (req, res) => {
     const validated = DistrictValidator.validateDistrictQuery(req.query);
     const result = await DistrictService.getAllDistricts(validated);
@@ -18,7 +19,6 @@ const getDistrictById = asyncHandler(async (req, res) => {
         return responseError(res, 'Kecamatan tidak ditemukan', 404);
     }
 
-    // Ambil history risiko
     const riskHistory = await DistrictRiskService.getDistrictRiskHistory(id, 12);
     district.risk_history = riskHistory;
 

@@ -1,10 +1,12 @@
-// const { query } = require('../../config/db.config');
+// src/controllers/auth.js
+
 const { comparePassword, generateTokenPair, blacklistToken, refreshAccessToken } = require('../../config/auth.config');
 const { responseSuccess, responseError } = require('../utils/errorHandler');
 const AuthValidator = require('../validator/auth/index');
-const UserService = require('../services/postgres/User');
-const NotificationService = require('../services/postgres/Notification');
+const { UserService } = require('../services/postgres');
+const NotificationService = require('../services/postgres/notification');
 
+// Controller untuk autentikasi pengguna, termasuk login, logout, refresh token, dan pengelolaan sesi pengguna
 const login = async (req, res) => {
     try {
         const { email, password } = AuthValidator.validateLogin(req.body);
@@ -24,10 +26,8 @@ const login = async (req, res) => {
             return responseError(res, 'Email atau password salah', 401);
         }
 
-        // Dapatkan data lengkap user
         const fullUser = await UserService.getUserById(user.id);
 
-        // Generate token pair
         const { accessToken, refreshToken, expiresIn } = generateTokenPair({
             id: user.id,
             email: user.email,
@@ -36,7 +36,6 @@ const login = async (req, res) => {
             perusahaan_csr_id: fullUser.csrCompanyId
         });
 
-        // Buat notifikasi login
         await NotificationService.createNotification({
             userId: user.id,
             title: 'Login Berhasil',

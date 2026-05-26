@@ -1,25 +1,16 @@
-// src/controllers/analyticsController.js
+// src/controllers/analytics.js
+
 const { responseSuccess, asyncHandler } = require('../utils/errorHandler');
-const RiskScoreService = require('../services/postgres/RiskScore');
-const DistrictRiskService = require('../services/postgres/DistrictRisk');
-const AssistanceRequestService = require('../services/postgres/AssistanceRequest');
-const SchoolService = require('../services/postgres/School');
-const SubmissionService = require('../services/postgres/Submission')
+const { RiskScoreService, DistrictRiskService, AssistanceRequestService, SchoolService, SubmissionService } = require('../services/postgres');
 const AnalyticsValidator = require('../validator/analytics/index');
 
+// Controller untuk endpoint analytics, menyediakan data dan insights untuk dashboard admin Dinas
 const getOverview = asyncHandler(async (req, res) => {
     const validated = AnalyticsValidator.validateOverview(req.query);
 
-    // Statistik sekolah
     const schoolStats = await SchoolService.getSchoolStatistics();
-
-    // Statistik risiko
     const riskStats = await RiskScoreService.getRiskStatistics();
-
-    // Statistik bantuan
     const assistanceStats = await AssistanceRequestService.getAssistanceStatistics();
-
-    // Statistik pengajuan perubahan data
     const submissionStats = await SubmissionService.getSubmissionStatistics();
 
     return responseSuccess(res, {
@@ -37,7 +28,6 @@ const getOverview = asyncHandler(async (req, res) => {
 const getRiskTrend = asyncHandler(async (req, res) => {
     const { months = 6 } = AnalyticsValidator.validateRiskTrend(req.query);
 
-    // Ambil data risk score per bulan
     const trend = await RiskScoreService.getRiskTrend(months);
 
     return responseSuccess(res, {

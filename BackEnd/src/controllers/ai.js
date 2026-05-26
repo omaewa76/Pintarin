@@ -1,34 +1,27 @@
-// src/controllers/aiController.js
+// src/controllers/ai.js
+
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
-const RiskScoreService = require('../services/postgres/RiskScore');
-const DistrictRiskService = require('../services/postgres/DistrictRisk');
-const SchoolService = require('../services/postgres/School');
+const { RiskScoreService, SchoolService, DistrictRiskService } = require('../services/postgres');
 const AIValidator = require('../validator/ai/index');
 
-// Simulasi model AI (untuk MVP, nanti bisa diganti dengan model sesungguhnya)
+// Controller untuk fitur AI, termasuk prediksi risiko sekolah, batch prediksi, dan insights untuk dashboard
 const predictRiskScore = async (schoolData) => {
-    // Logika sederhana untuk MVP
-    let score = 50; // default medium
+    let score = 50;
 
-    // Faktor jumlah siswa rentan
     if (schoolData.vulnerableStudentCount > 100) score += 20;
     else if (schoolData.vulnerableStudentCount > 50) score += 10;
 
-    // Faktor kondisi bangunan
     if (schoolData.buildingCondition === 'Rusak Berat') score += 25;
     else if (schoolData.buildingCondition === 'Rusak Sedang') score += 15;
     else if (schoolData.buildingCondition === 'Rusak Ringan') score += 5;
 
-    // Faktor akreditasi
     if (schoolData.accreditation === 'C') score += 15;
     else if (schoolData.accreditation === 'Belum Terakreditasi') score += 25;
 
-    // Faktor rasio guru/siswa
     const teacherRatio = schoolData.teacherCount / schoolData.studentCount;
     if (teacherRatio < 0.05) score += 15;
     else if (teacherRatio < 0.08) score += 5;
 
-    // Batasi score antara 0-100
     score = Math.min(100, Math.max(0, score));
 
     let category = 'Rendah';
@@ -48,7 +41,6 @@ const predictRisk = asyncHandler(async (req, res) => {
 
     const { score, category } = await predictRiskScore(school);
 
-    // Simpan ke database
     const riskScore = await RiskScoreService.createRiskScore({
         schoolId: school_id,
         score,
@@ -65,7 +57,6 @@ const predictRisk = asyncHandler(async (req, res) => {
         }
     });
 
-    // Rekomendasi berdasarkan skor
     let recommendation = '';
     if (score >= 70) {
         recommendation = 'Sekolah memerlukan intervensi segera. Prioritaskan bantuan infrastruktur dan beasiswa.';
@@ -102,7 +93,6 @@ const batchPredict = asyncHandler(async (req, res) => {
             if (school) schools.push(school);
         }
     } else {
-        // Ambil semua sekolah
         const allSchools = await SchoolService.getAllSchools({ limit: 999 });
         schools = allSchools.data;
     }
@@ -145,14 +135,12 @@ const batchPredict = asyncHandler(async (req, res) => {
 const getInsights = asyncHandler(async (req, res) => {
     const { district_id, limit = 5 } = AIValidator.validateGetInsights(req.query);
 
-    // Dapatkan data untuk insights
     const riskStats = await RiskScoreService.getRiskStatistics();
     const ranking = await DistrictRiskService.getDistrictRanking();
     const topRisks = await RiskScoreService.getTopRiskSchools(limit);
 
     let insights = [];
 
-    // Overview risiko
     insights.push({
         type: 'overview',
         title: 'Ringkasan Risiko Sekolah',
@@ -160,7 +148,6 @@ const getInsights = asyncHandler(async (req, res) => {
         priority: 'high'
     });
 
-    // Kecamatan dengan risiko tertinggi
     if (ranking.length > 0) {
         insights.push({
             type: 'district_alert',
@@ -171,18 +158,16 @@ const getInsights = asyncHandler(async (req, res) => {
         });
     }
 
-    // Sekolah dengan risiko tertinggi
     if (topRisks.length > 0) {
         insights.push({
             type: 'school_alert',
             title: 'Sekolah Prioritas',
-            message: `${topRisks[0].nama_sekolah} merupakan sekolah dengan risiko tertinggi. Segera lakukan verifikasi dan intervensi.`,
+            message: `${topRisks[0].schoolName} merupakan sekolah dengan risiko tertinggi. Segera lakukan verifikasi dan intervensi.`,
             priority: 'critical',
             data: topRisks
         });
     }
 
-    // Rekomendasi umum
     insights.push({
         type: 'recommendation',
         title: 'Rekomendasi Sistem',
@@ -190,7 +175,6 @@ const getInsights = asyncHandler(async (req, res) => {
         priority: 'medium'
     });
 
-    // Filter berdasarkan district jika ada
     if (district_id) {
         insights = insights.filter(i => i.type !== 'district_alert');
         const districtRank = ranking.find(r => r.id === parseInt(district_id));
@@ -216,8 +200,6 @@ const getInsights = asyncHandler(async (req, res) => {
 
 const trainModel = asyncHandler(async (req, res) => {
     const { force_retrain = false, test_split = 0.2 } = AIValidator.validateTrainModel(req.body);
-
-    // Di production, ini akan memanggil service machine learning
 
     return responseSuccess(res, {
         status: 'success',

@@ -1,8 +1,10 @@
+// src/controllers/school.js
+
 const { responseSuccess, responseError } = require('../utils/errorHandler');
-const SchoolService = require('../services/postgres/School');
-const RiskScoreService = require('../services/postgres/RiskScore');
+const { SchoolService, RiskScoreService } = require('../services/postgres');
 const SchoolValidator = require('../validator/school/index');
 
+// Controller untuk manajemen data sekolah, termasuk pengambilan data sekolah, detail sekolah, verifikasi sekolah, history risiko sekolah, serta fitur CRUD untuk data sekolah (fitur CRUD masih dalam pengembangan)
 const getAllSchools = async (req, res) => {
     try {
         const validatedQuery = SchoolValidator.validateSchoolQuery(req.query);

@@ -1,11 +1,12 @@
 // src/controllers/prediction.js
 
 const { responseSuccess, asyncHandler } = require('../utils/errorHandler');
-const { Prediction } = require('../services/postgres');
+const { PredictionService } = require('../services/postgres');
 const InvariantError = require('../exceptions/InvariantError');
 
+// Controller untuk manajemen prediksi AI, termasuk pengambilan prediksi yang perlu direview, validasi prediksi oleh petugas, dan pengambilan history validasi serta statistik validasi
 const getPendingReview = asyncHandler(async (req, res) => {
-  const result = await Prediction.getPendingReviews();
+  const result = await PredictionService.getPendingReviews();
   return responseSuccess(res, {
     count: result.length,
     data: result,
@@ -26,11 +27,11 @@ const validatePrediction = asyncHandler(async (req, res) => {
     throw new InvariantError('corrected_label wajib diisi saat action = override');
   }
 
-  await Prediction.validatePredictionExists(predictionId);
+  await PredictionService.validatePredictionExists(predictionId);
 
   let result;
   if (action === 'override') {
-    await Prediction.updatePredictionWithOverride(predictionId, {
+    await PredictionService.updatePredictionWithOverride(predictionId, {
       finalLabel: corrected_label,
       validationNote: reason || `Override dari AI ke ${corrected_label}`,
     });
@@ -41,7 +42,7 @@ const validatePrediction = asyncHandler(async (req, res) => {
       validated_by: officerId,
     };
   } else if (action === 'approve') {
-    await Prediction.updatePredictionWithApprove(predictionId, reason || 'Disetujui oleh petugas');
+    await PredictionService.updatePredictionWithApprove(predictionId, reason || 'Disetujui oleh petugas');
     result = {
       prediction_id: predictionId,
       action,
@@ -49,7 +50,7 @@ const validatePrediction = asyncHandler(async (req, res) => {
       validated_by: officerId,
     };
   } else {
-    await Prediction.updatePredictionWithFlag(predictionId, reason || 'Perlu review lebih lanjut');
+    await PredictionService.updatePredictionWithFlag(predictionId, reason || 'Perlu review lebih lanjut');
     result = {
       prediction_id: predictionId,
       action,
@@ -57,7 +58,7 @@ const validatePrediction = asyncHandler(async (req, res) => {
     };
   }
 
-  await Prediction.createValidationRecord({
+  await PredictionService.createValidationRecord({
     predictionId,
     officerId,
     action,
@@ -73,19 +74,19 @@ const validatePrediction = asyncHandler(async (req, res) => {
 
 const getValidationHistory = asyncHandler(async (req, res) => {
   const predictionId = parseInt(req.params.id);
-  await Prediction.validatePredictionExists(predictionId);
-  const history = await Prediction.getValidationHistory(predictionId);
+  await PredictionService.validatePredictionExists(predictionId);
+  const history = await PredictionService.getValidationHistory(predictionId);
   return responseSuccess(res, history, 'History validasi berhasil diambil');
 });
 
 const getValidationStats = asyncHandler(async (req, res) => {
-  const stats = await Prediction.getValidationStats();
+  const stats = await PredictionService.getValidationStats();
   return responseSuccess(res, stats, 'Statistik validasi berhasil diambil');
 });
 
 const getLatestPredictions = asyncHandler(async (req, res) => {
   const { limit = 20 } = req.query;
-  const predictions = await Prediction.getLatestPredictions(parseInt(limit));
+  const predictions = await PredictionService.getLatestPredictions(parseInt(limit));
   return responseSuccess(res, {
     count: predictions.length,
     data: predictions,

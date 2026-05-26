@@ -1,14 +1,14 @@
-// src/controllers/submissionController.js
+// src/controllers/submission.js
+
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
-const SubmissionService = require('../services/postgres/Submission');
-const SchoolService = require('../services/postgres/School');
-const NotificationService = require('../services/postgres/Notification');
+const { SubmissionService, SchoolService } = require('../services/postgres');
+const NotificationService = require('../services/postgres/notification');
 const SubmissionValidator = require('../validator/submission/index');
 
+// Controller untuk manajemen pengajuan perubahan data sekolah, termasuk pembuatan pengajuan baru oleh sekolah, serta approval/rejection oleh Dinas
 const getAllSubmissions = asyncHandler(async (req, res) => {
     const validated = SubmissionValidator.validateSubmissionQuery(req.query);
 
-    // Filter berdasarkan role
     if (req.user.role === 'sekolah') {
         const school = await SchoolService.getSchoolByUserId(req.user.id);
         validated.school_id = school?.id;
@@ -32,13 +32,11 @@ const getSubmissionById = asyncHandler(async (req, res) => {
 const createSubmission = asyncHandler(async (req, res) => {
     const validated = SubmissionValidator.validateCreateSubmission(req.body);
 
-    // Dapatkan data sekolah dari user yang login
     const school = await SchoolService.getSchoolByUserId(req.user.id);
     if (!school) {
         return responseError(res, 'Data sekolah tidak ditemukan', 404);
     }
 
-    // Ambil data sebelum perubahan
     const currentData = await SchoolService.getSchoolById(school.id);
 
     const newSubmission = await SubmissionService.createSubmission({
@@ -49,7 +47,6 @@ const createSubmission = asyncHandler(async (req, res) => {
         dataBefore: validated.data_before || currentData
     });
 
-    // Notifikasi ke Dinas
     await NotificationService.broadcastNotification('dinas',
         'Pengajuan Perubahan Data Baru',
         `Sekolah ${school.name} mengajukan perubahan data: ${validated.update_type}`,
@@ -70,7 +67,6 @@ const approveSubmission = asyncHandler(async (req, res) => {
 
     const updated = await SubmissionService.approveSubmission(id, req.user.id);
 
-    // Notifikasi ke sekolah
     await NotificationService.createNotification({
         userId: submission.submittedBy,
         title: 'Pengajuan Disetujui',
@@ -92,7 +88,6 @@ const rejectSubmission = asyncHandler(async (req, res) => {
 
     const updated = await SubmissionService.rejectSubmission(validated.id, req.user.id);
 
-    // Notifikasi ke sekolah
     await NotificationService.createNotification({
         userId: submission.submittedBy,
         title: 'Pengajuan Ditolak',

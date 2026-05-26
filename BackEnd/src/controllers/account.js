@@ -1,12 +1,13 @@
-// src/controllers/accountController.js
+// src/controllers/account.js
+
 const { responseSuccess, responseError, asyncHandler } = require('../utils/errorHandler');
-const UserService = require('../services/postgres/User');
+const { UserService } = require('../services/postgres');
 const { hashPassword } = require('../../config/auth.config');
-const NotificationService = require('../services/postgres/Notification');
+const NotificationService = require('../services/postgres/notification');
 const AccountValidator = require('../validator/account/index');
 
+// Controller untuk manajemen akun pengguna, termasuk CRUD akun dan pengelolaan status akun (aktif/suspend)
 const getAllAccounts = asyncHandler(async (req, res) => {
-    // Hanya Dinas yang bisa melihat semua akun
     if (req.user.role !== 'dinas') {
         return responseError(res, 'Akses ditolak. Hanya admin Dinas yang bisa melihat semua akun.', 403);
     }
@@ -20,7 +21,6 @@ const getAllAccounts = asyncHandler(async (req, res) => {
 const getAccountById = asyncHandler(async (req, res) => {
     const { id } = AccountValidator.validateAccountId(req.params);
 
-    // Cek akses Dinas bisa lihat semua, user biasa hanya bisa lihat akun sendiri
     if (req.user.role !== 'dinas' && req.user.id !== parseInt(id)) {
         return responseError(res, 'Akses ditolak', 403);
     }
@@ -35,14 +35,12 @@ const getAccountById = asyncHandler(async (req, res) => {
 });
 
 const createAccount = asyncHandler(async (req, res) => {
-    // Hanya Dinas yang bisa membuat akun baru
     if (req.user.role !== 'dinas') {
         return responseError(res, 'Akses ditolak. Hanya admin Dinas yang bisa membuat akun.', 403);
     }
 
     const validated = AccountValidator.validateCreateAccount(req.body);
 
-    // Cek email sudah terdaftar
     const existingUser = await UserService.getUserByEmail(validated.email);
     if (existingUser) {
         return responseError(res, 'Email sudah terdaftar', 409);
@@ -66,7 +64,6 @@ const updateAccount = asyncHandler(async (req, res) => {
     const { id } = AccountValidator.validateAccountId(req.params);
     const validated = AccountValidator.validateUpdateAccount(req.body);
 
-    // Cek akses
     if (req.user.role !== 'dinas' && req.user.id !== parseInt(id)) {
         return responseError(res, 'Akses ditolak', 403);
     }
@@ -76,14 +73,12 @@ const updateAccount = asyncHandler(async (req, res) => {
         return responseError(res, 'Akun tidak ditemukan', 404);
     }
 
-    // Update user
     const updatedUser = await UserService.updateUser(id, validated);
 
     return responseSuccess(res, updatedUser, 'Akun berhasil diperbarui');
 });
 
 const suspendAccount = asyncHandler(async (req, res) => {
-    // Hanya Dinas yang bisa suspend akun
     if (req.user.role !== 'dinas') {
         return responseError(res, 'Akses ditolak. Hanya admin Dinas yang bisa suspend akun.', 403);
     }
@@ -96,14 +91,12 @@ const suspendAccount = asyncHandler(async (req, res) => {
         return responseError(res, 'Akun tidak ditemukan', 404);
     }
 
-    // Tidak bisa suspend diri sendiri
     if (req.user.id === parseInt(id)) {
         return responseError(res, 'Tidak dapat menonaktifkan akun sendiri', 400);
     }
 
     const suspendedUser = await UserService.suspendUser(id);
 
-    // Kirim notifikasi ke user yang di-suspend
     await NotificationService.createNotification({
         userId: id,
         title: 'Akun Dinonaktifkan',
@@ -115,7 +108,6 @@ const suspendAccount = asyncHandler(async (req, res) => {
 });
 
 const activateAccount = asyncHandler(async (req, res) => {
-    // Hanya Dinas yang bisa mengaktifkan akun
     if (req.user.role !== 'dinas') {
         return responseError(res, 'Akses ditolak. Hanya admin Dinas yang bisa mengaktifkan akun.', 403);
     }
@@ -129,7 +121,6 @@ const activateAccount = asyncHandler(async (req, res) => {
 
     const activatedUser = await UserService.activateUser(id);
 
-    // Kirim notifikasi ke user yang diaktifkan
     await NotificationService.createNotification({
         userId: id,
         title: 'Akun Diaktifkan',
@@ -141,14 +132,12 @@ const activateAccount = asyncHandler(async (req, res) => {
 });
 
 const deleteAccount = asyncHandler(async (req, res) => {
-    // Hanya Dinas yang bisa menghapus akun
     if (req.user.role !== 'dinas') {
         return responseError(res, 'Akses ditolak. Hanya admin Dinas yang bisa menghapus akun.', 403);
     }
 
     const { id } = AccountValidator.validateAccountId(req.params);
 
-    // Tidak bisa menghapus diri sendiri
     if (req.user.id === parseInt(id)) {
         return responseError(res, 'Tidak dapat menghapus akun sendiri', 400);
     }

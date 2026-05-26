@@ -1,12 +1,10 @@
 // src/controllers/csr.js
 
 const { responseSuccess, responseError } = require('../utils/errorHandler');
-const CSRCompany = require('../services/postgres/CSRCompany');
-const AssistanceRequest = require('../services/postgres/AssistanceRequest');
-const Notification = require('../services/postgres/Notification');
-const { CSR } = require('../services/postgres');
+const { CSRCompanyService, AssistanceRequestService, NotificationService, CSRService } = require('../services/postgres');
 const CSRValidator = require('../validator/csr/index');
 
+// Controller untuk fitur CSR, termasuk manajemen perusahaan CSR, pengajuan bantuan, dan matching kecamatan untuk program CSR
 const getAllCompanies = async (req, res) => {
     try {
         const validated = CSRValidator.validateCompanyQuery(req.query);
