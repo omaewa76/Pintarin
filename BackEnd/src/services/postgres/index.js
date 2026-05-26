@@ -1,27 +1,27 @@
 // src/services/postgres/index.js
 
-const District = require('./District');
-const CSRCompany = require('./CSRCompany');
-const School = require('./School');
-const User = require('./User');
-const RiskScore = require('./RiskScore');
-const DistrictRisk = require('./DistrictRisk');
-const AssistanceRequest = require('./AssistanceRequest');
-const Submission = require('./Submission');
-const Notification = require('./Notification');
-const Prediction = require('./prediction');
-const CSR = require('./csr');
+const UserService = require('./user');
+const SchoolService = require('./school');
+const DistrictService = require('./district');
+const DistrictRiskService = require('./districtRisk');
+const RiskScoreService = require('./riskScore');
+const SubmissionService = require('./submission');
+const AssistanceRequestService = require('./assistanceRequest');
+const CSRCompanyService = require('./csrCompany');
+const NotificationService = require('./notification');
+const PredictionService = require('./prediction');
+const CSRService = require('./csr');
 
 module.exports = {
-    District,
-    CSRCompany,
-    School,
-    User,
-    RiskScore,
-    DistrictRisk,
-    AssistanceRequest,
-    Submission,
-    Notification,
-    Prediction,
-    CSR,
+    UserService,
+    SchoolService,
+    DistrictService,
+    DistrictRiskService,
+    RiskScoreService,
+    SubmissionService,
+    AssistanceRequestService,
+    CSRCompanyService,
+    NotificationService,
+    PredictionService,
+    CSRService,
 };
