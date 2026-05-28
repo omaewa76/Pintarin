@@ -166,6 +166,64 @@ const mapNotificationDBToModel = (dbRow) => ({
   createdAt: dbRow.created_at
 });
 
+// MAPPER UNTUK SKOR RISIKO KECAMATAN (dengan confidence)
+const mapDistrictRiskWithConfidenceDBToModel = (dbRow) => ({
+  id: dbRow.id,
+  districtId: dbRow.kecamatan_id,
+  districtName: dbRow.nama_kecamatan,
+  riskScore: dbRow.rata_rata_skor ? parseFloat(dbRow.rata_rata_skor) : null,
+  riskCategory: dbRow.kategori_risiko,
+  predictedLabel: dbRow.kategori_risiko,
+  finalLabel: dbRow.final_label,
+  confidenceScore: dbRow.confidence_score ? parseFloat(dbRow.confidence_score) : null,
+  confidenceLevel: dbRow.confidence_level,
+  needsHumanReview: dbRow.needs_human_review,
+  isHumanValidated: dbRow.is_human_validated,
+  validationNote: dbRow.validation_note,
+  computedAt: dbRow.waktu_perhitungan,
+  modelVersion: dbRow.versi_model_ai,
+  createdAt: dbRow.created_at,
+  updatedAt: dbRow.updated_at
+});
+
+// MAPPER UNTUK PREDICTION VALIDATIONS
+const mapPredictionValidationDBToModel = (dbRow) => ({
+  id: dbRow.id,
+  predictionId: dbRow.prediction_id,
+  officerId: dbRow.officer_id,
+  officerName: dbRow.officer_name || dbRow.nama_petugas,
+  action: dbRow.action,
+  reason: dbRow.reason,
+  correctedLabel: dbRow.corrected_label,
+  oldConfidenceScore: dbRow.old_confidence_score ? parseFloat(dbRow.old_confidence_score) : null,
+  newConfidenceScore: dbRow.new_confidence_score ? parseFloat(dbRow.new_confidence_score) : null,
+  validatedAt: dbRow.validated_at
+});
+
+// MAPPER UNTUK CSR MATCH LOGS
+const mapCSRMatchLogDBToModel = (dbRow) => ({
+  id: dbRow.id,
+  focusArea: dbRow.focus_area,
+  budgetRange: dbRow.budget_range,
+  userId: dbRow.user_id,
+  userName: dbRow.nama_pengguna,
+  results: dbRow.results_json,
+  createdAt: dbRow.created_at
+});
+
+// MAPPER UNTUK DATA KECAMATAN UNTUK CSR MATCHING
+const mapDistrictForCSRDBToModel = (dbRow) => ({
+  id: dbRow.id,
+  districtId: dbRow.kecamatan_id,
+  districtName: dbRow.nama_kecamatan,
+  riskLabel: dbRow.risk_label,
+  riskScore: dbRow.risk_score ? parseFloat(dbRow.risk_score) : null,
+  confidenceScore: dbRow.confidence_score ? parseFloat(dbRow.confidence_score) : null,
+  totalSd: parseInt(dbRow.total_sd) || 0,
+  rasioPip: parseFloat(dbRow.rasio_pip_per_rentan) || 0,
+  totalWargaRentan: parseInt(dbRow.total_warga_rentan) || 0
+});
+
 // EXPORT SEMUA MAPPER
 module.exports = {
   // Kecamatan
@@ -193,5 +251,10 @@ module.exports = {
   mapSubmissionDBToModel,
 
   // Notifikasi
-  mapNotificationDBToModel
+  mapNotificationDBToModel,
+
+  mapDistrictRiskWithConfidenceDBToModel,
+  mapPredictionValidationDBToModel,
+  mapCSRMatchLogDBToModel,
+  mapDistrictForCSRDBToModel
 };

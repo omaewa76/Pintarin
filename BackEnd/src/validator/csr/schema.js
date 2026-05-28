@@ -1,4 +1,4 @@
-// src/validator/csr/index.js
+// src/validator/csr/schema.js
 
 const Joi = require('joi');
 
@@ -64,6 +64,12 @@ const completeAssistanceSchema = Joi.object({
     notes: Joi.string().optional()
 });
 
+// CSR MATCHING SCHEMA
+const csrMatchSchema = Joi.object({
+    focus_area: Joi.string().valid('umum', 'infrastruktur_sd', 'beasiswa', 'angka_putus_sekolah').default('umum'),
+    budget_range: Joi.string().valid('semua', 'kecil', 'sedang', 'besar').default('semua')
+});
+
 module.exports = {
     companyQuerySchema,
     companyIdSchema,
@@ -74,5 +80,6 @@ module.exports = {
     createAssistanceSchema,
     approveAssistanceSchema,
     rejectAssistanceSchema,
-    completeAssistanceSchema
+    completeAssistanceSchema,
+    csrMatchSchema
 };

@@ -2,6 +2,7 @@
 
 const { responseError } = require('../utils/errorHandler');
 
+// Middleware adapter untuk mengintegrasikan validator dengan Express
 const validationAdapter = (validator, source = 'body') => {
     return (req, res, next) => {
         try {

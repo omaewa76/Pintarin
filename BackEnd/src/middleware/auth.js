@@ -3,6 +3,7 @@
 const TokenManager = require('../tokenize/TokenManager');
 const { responseError } = require('../utils/errorHandler');
 
+// Middleware untuk memverifikasi token JWT dan mengautentikasi pengguna
 const authenticate = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 

@@ -2,6 +2,7 @@
 
 const { responseError } = require('../utils/errorHandler');
 
+// Middleware untuk memeriksa peran pengguna dan membatasi akses ke endpoint tertentu
 const requireRole = (...allowedRoles) => {
     return (req, res, next) => {
         if (!req.user) {
