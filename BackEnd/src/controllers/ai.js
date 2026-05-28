@@ -4,10 +4,11 @@ const { responseSuccess, responseError, asyncHandler } = require('../utils/error
 const { RiskScoreService, SchoolService, DistrictRiskService } = require('../services/postgres');
 const AIValidator = require('../validator/ai/index');
 
-// Controller untuk fitur AI, termasuk prediksi risiko sekolah, batch prediksi, dan insights untuk dashboard
+// Fungsi untuk menghitung skor risiko berdasarkan data sekolah
 const predictRiskScore = async (schoolData) => {
     let score = 50;
 
+    // Faktor-faktor yang mempengaruhi skor risiko
     if (schoolData.vulnerableStudentCount > 100) score += 20;
     else if (schoolData.vulnerableStudentCount > 50) score += 10;
 
@@ -31,6 +32,7 @@ const predictRiskScore = async (schoolData) => {
     return { score, category };
 };
 
+// Fungsi untuk memprediksi risiko sekolah berdasarkan data yang diberikan
 const predictRisk = asyncHandler(async (req, res) => {
     const { school_id } = AIValidator.validatePredictRisk(req.body);
 
@@ -41,7 +43,8 @@ const predictRisk = asyncHandler(async (req, res) => {
 
     const { score, category } = await predictRiskScore(school);
 
-    const riskScore = await RiskScoreService.createRiskScore({
+    // Simpan ke database variabel riskScore digunakan untuk menyimpan hasil
+    await RiskScoreService.createRiskScore({
         schoolId: school_id,
         score,
         category,
@@ -57,7 +60,8 @@ const predictRisk = asyncHandler(async (req, res) => {
         }
     });
 
-    let recommendation = '';
+    // Rekomendasi berdasarkan skor
+    let recommendation;
     if (score >= 70) {
         recommendation = 'Sekolah memerlukan intervensi segera. Prioritaskan bantuan infrastruktur dan beasiswa.';
     } else if (score >= 40) {
@@ -66,6 +70,7 @@ const predictRisk = asyncHandler(async (req, res) => {
         recommendation = 'Sekolah dalam kondisi cukup baik. Tetap lakukan monitoring rutin.';
     }
 
+    // Respon dengan detail hasil prediksi
     return responseSuccess(res, {
         school_id: school.id,
         school_name: school.name,
@@ -83,6 +88,7 @@ const predictRisk = asyncHandler(async (req, res) => {
     }, 'Prediksi risiko berhasil dilakukan');
 });
 
+// Fungsi untuk memproses batch prediksi risiko untuk banyak sekolah sekaligus
 const batchPredict = asyncHandler(async (req, res) => {
     const { school_ids, model_version = 'v1.0.0' } = AIValidator.validateBatchPredict(req.body);
 
@@ -101,7 +107,8 @@ const batchPredict = asyncHandler(async (req, res) => {
     for (const school of schools) {
         const { score, category } = await predictRiskScore(school);
 
-        const riskScore = await RiskScoreService.createRiskScore({
+        // Simpan hasil prediksi untuk setiap sekolah dalam database
+        await RiskScoreService.createRiskScore({
             schoolId: school.id,
             score,
             category,
@@ -116,6 +123,7 @@ const batchPredict = asyncHandler(async (req, res) => {
             }
         });
 
+        // Simpan hasil prediksi untuk setiap sekolah dalam array results
         results.push({
             school_id: school.id,
             school_name: school.name,
@@ -132,6 +140,7 @@ const batchPredict = asyncHandler(async (req, res) => {
     }, `Berhasil memproses ${results.length} sekolah`);
 });
 
+// Fungsi untuk menghasilkan insights berdasarkan data risiko sekolah dan kecamatan
 const getInsights = asyncHandler(async (req, res) => {
     const { district_id, limit = 5 } = AIValidator.validateGetInsights(req.query);
 
@@ -139,7 +148,7 @@ const getInsights = asyncHandler(async (req, res) => {
     const ranking = await DistrictRiskService.getDistrictRanking();
     const topRisks = await RiskScoreService.getTopRiskSchools(limit);
 
-    let insights = [];
+    const insights = [];
 
     insights.push({
         type: 'overview',
@@ -176,18 +185,21 @@ const getInsights = asyncHandler(async (req, res) => {
     });
 
     if (district_id) {
-        insights = insights.filter(i => i.type !== 'district_alert');
+        const filteredInsights = insights.filter(i => i.type !== 'district_alert');
         const districtRank = ranking.find(r => r.id === parseInt(district_id));
         if (districtRank) {
-            insights.unshift({
+            filteredInsights.unshift({
                 type: 'district_specific',
                 title: `Analisis Kecamatan ${districtRank.nama_kecamatan}`,
                 message: `Kecamatan ini berada di peringkat ${ranking.findIndex(r => r.id === parseInt(district_id)) + 1} dengan skor risiko ${districtRank.risk_score}.`,
                 priority: 'medium'
             });
         }
+        insights.length = 0;
+        insights.push(...filteredInsights);
     }
 
+    // Respon dengan insights yang dihasilkan
     return responseSuccess(res, {
         insights,
         generated_at: new Date().toISOString(),
@@ -198,9 +210,11 @@ const getInsights = asyncHandler(async (req, res) => {
     }, 'Insights berhasil dihasilkan');
 });
 
+// Fungsi untuk melatih ulang model AI dengan data terbaru
 const trainModel = asyncHandler(async (req, res) => {
     const { force_retrain = false, test_split = 0.2 } = AIValidator.validateTrainModel(req.body);
 
+    // Simulasi proses training model
     return responseSuccess(res, {
         status: 'success',
         message: force_retrain ? 'Model berhasil dilatih ulang' : 'Model dalam kondisi terbaru',

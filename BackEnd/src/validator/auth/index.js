@@ -9,6 +9,7 @@ const {
     resetPasswordSchema
 } = require('./schema');
 
+// Validasi Auth
 const AuthValidator = {
     validateLogin: (payload) => {
         const result = loginSchema.validate(payload);

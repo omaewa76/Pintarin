@@ -4,6 +4,7 @@ const { DistrictRiskModel, DistrictModel } = require('../../models');
 const { mapDistrictRiskDBToModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 
+// Service untuk manajemen risiko kecamatan
 class DistrictRiskService {
     static async getAllLatestDistrictRisks() {
         const risks = await DistrictRiskModel.getLatestRisks();
@@ -15,6 +16,7 @@ class DistrictRiskService {
         return history.map(mapDistrictRiskDBToModel);
     }
 
+    // Fungsi untuk membuat record risiko kecamatan baru, dengan menyimpan data risiko ke database dan kemudian mengambil detail record risiko tersebut berdasarkan ID yang baru dibuat, dengan join ke tabel kecamatan untuk mendapatkan nama kecamatan terkait, sehingga memberikan gambaran lengkap tentang profil risiko kecamatan yang telah dibuat
     static async createDistrictRisk(data) {
         const { districtId, averageScore, highRiskCount, modelVersion } = data;
 

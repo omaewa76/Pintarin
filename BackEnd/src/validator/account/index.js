@@ -10,6 +10,7 @@ const {
     activateAccountSchema
 } = require('./schema');
 
+// Validator untuk validasi data yang masuk terkait operasi pada akun pengguna, termasuk validasi query parameters untuk pengambilan data akun, validasi parameter ID untuk operasi spesifik pada akun tertentu, serta validasi payload untuk pembuatan, pembaruan, penangguhan, dan pengaktifan akun, dengan memastikan bahwa data yang diterima sesuai dengan aturan yang telah ditetapkan dan memberikan gambaran lengkap tentang profil akun yang sedang dikelola
 const AccountValidator = {
     validateAccountQuery: (query) => {
         const result = accountQuerySchema.validate(query);

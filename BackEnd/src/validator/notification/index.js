@@ -8,6 +8,7 @@ const {
     broadcastNotificationSchema
 } = require('./schema');
 
+// Validasi Notifikasi
 const NotificationValidator = {
     validateNotificationQuery: (query) => {
         const result = notificationQuerySchema.validate(query);

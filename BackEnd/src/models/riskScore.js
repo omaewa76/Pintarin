@@ -8,6 +8,7 @@ class RiskScoreModel extends BaseModel {
     static tableName = 'skor_risiko_sekolah';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil skor risiko terkini untuk semua sekolah dengan dukungan pagination untuk mengelola jumlah data yang diambil dalam satu permintaan, serta menyertakan informasi nama sekolah dan skor risiko terkini
     static async getLatestBySchoolId(schoolId) {
         const result = await query(`
             SELECT rs.*, s.nama_sekolah
@@ -32,6 +33,7 @@ class RiskScoreModel extends BaseModel {
         return result.rows;
     }
 
+    // Fungsi untuk mengambil statistik skor risiko berdasarkan ID sekolah, dengan menghitung total jumlah perhitungan skor risiko yang telah dilakukan untuk sekolah tersebut, serta menghitung rata-rata skor risiko, jumlah perhitungan yang masuk dalam kategori risiko tinggi, sedang, dan rendah, dan mengembalikan data dalam bentuk objek yang berisi informasi statistik yang terkait dengan sekolah tersebut
     static async getStatistics() {
         const result = await query(`
             SELECT 

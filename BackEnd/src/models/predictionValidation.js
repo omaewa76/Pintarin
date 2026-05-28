@@ -19,6 +19,7 @@ class PredictionValidationModel extends BaseModel {
         return result.rows[0];
     }
 
+    // Fungsi untuk mengambil riwayat validasi berdasarkan ID prediksi dengan join ke tabel pengguna untuk mendapatkan nama petugas yang melakukan validasi, serta mengurutkan hasil berdasarkan tanggal validasi terbaru
     static async getHistoryByPredictionId(predictionId) {
         const result = await query(`
             SELECT 
@@ -32,6 +33,7 @@ class PredictionValidationModel extends BaseModel {
         return result.rows;
     }
 
+    // Fungsi untuk mengambil statistik pencapaian validasi berdasarkan tanggal, dengan mengelompokkan hasil berdasarkan tanggal validasi, serta menghitung total validasi, jumlah validasi yang disetujui, ditolak, dan ditandai untuk tinjauan lebih lanjut, dan mengembalikan data dalam bentuk array objek yang berisi informasi tanggal dan statistik validasi yang terkait
     static async getStatistics() {
         const result = await query(`
             SELECT 
@@ -49,6 +51,7 @@ class PredictionValidationModel extends BaseModel {
         return result.rows;
     }
 
+    // Fungsi untuk mengambil statistik pencapaian validasi berdasarkan ID petugas, dengan mengelompokkan hasil berdasarkan petugas yang melakukan validasi, serta menghitung total validasi, jumlah validasi yang disetujui, ditolak, dan ditandai untuk tinjauan lebih lanjut, dan mengembalikan data dalam bentuk array objek yang berisi informasi petugas dan statistik validasi yang terkait
     static async getStatisticsByOfficer() {
         const result = await query(`
             SELECT 

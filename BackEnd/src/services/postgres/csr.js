@@ -4,6 +4,7 @@ const { PredictionModel, CSRMatchLogModel, DistrictModel } = require('../../mode
 const { mapDistrictForCSRDBToModel, mapCSRMatchLogDBToModel } = require('../../utils');
 
 class CSRService {
+    // Fungsi untuk membangun alasan rekomendasi berdasarkan faktor risiko dan fokus area, dengan memberikan penjelasan yang jelas dan informatif tentang mengapa suatu kecamatan direkomendasikan untuk intervensi atau bantuan dalam program CSR, sehingga dapat membantu pengguna memahami konteks dan kebutuhan di setiap kecamatan yang direkomendasikan
     static buildReason(district, focusArea) {
         const reasons = [];
 
@@ -20,6 +21,7 @@ class CSRService {
         return reasons.length > 0 ? reasons.join(', ') : 'Kebutuhan menyeluruh di semua aspek';
     }
 
+    // Fungsi untuk menghitung skor kecocokan berdasarkan faktor risiko dan fokus area, dengan memberikan bobot yang berbeda untuk setiap faktor sesuai dengan fokus area yang dipilih, sehingga dapat memberikan rekomendasi yang lebih relevan dan tepat sasaran untuk intervensi atau bantuan yang mungkin diperlukan di setiap kecamatan
     static calculateMatchScore(district, focusArea) {
         let matchScore = (district.riskScore || 0) * 0.4;
 
@@ -46,6 +48,7 @@ class CSRService {
         return Math.min(Math.round(matchScore), 100);
     }
 
+    // Fungsi untuk mengambil daftar kecamatan dengan skor risiko terkini, dengan join ke tabel prediksi untuk mendapatkan informasi skor risiko terbaru, serta menyertakan informasi tambahan seperti jumlah sekolah dasar, rasio penerima PIP, dan jumlah warga rentan, sehingga dapat memberikan gambaran lengkap tentang kondisi setiap kecamatan dalam konteks risiko pendidikan dan kebutuhan intervensi atau bantuan yang mungkin diperlukan
     static async getAllDistrictsWithLatestRisk() {
         const predictions = await PredictionModel.getLatestPredictions(100);
         const districts = await DistrictModel.findAllWithRisk({ limit: 100 });
@@ -75,6 +78,7 @@ class CSRService {
         });
     }
 
+    // Fungsi untuk mengambil rekomendasi kecamatan yang paling cocok untuk intervensi atau bantuan berdasarkan fokus area dan parameter lainnya, dengan menghitung skor kecocokan untuk setiap kecamatan berdasarkan faktor risiko dan kebutuhan yang relevan dengan fokus area yang dipilih, serta menyimpan log rekomendasi tersebut ke database untuk keperluan analisis dan pemantauan di masa mendatang, sehingga dapat memberikan rekomendasi yang lebih tepat sasaran dan membantu dalam pengambilan keputusan terkait intervensi atau bantuan yang diperlukan di setiap kecamatan
     static async getMatchingRecommendations(params) {
         const { focusArea = 'umum', budgetRange = 'semua', userId = null } = params;
 
@@ -112,6 +116,7 @@ class CSRService {
         };
     }
 
+    // Fungsi untuk menyimpan log rekomendasi kecamatan yang paling cocok untuk intervensi atau bantuan berdasarkan fokus area dan parameter lainnya, dengan menyimpan data log ke database menggunakan model CSRMatchLogModel, sehingga dapat digunakan untuk keperluan analisis dan pemantauan di masa mendatang terkait efektivitas rekomendasi yang diberikan dan kebutuhan intervensi atau bantuan di setiap kecamatan
     static async saveMatchLog(data) {
         const { focusArea, budgetRange, userId, results } = data;
         const log = await CSRMatchLogModel.create({

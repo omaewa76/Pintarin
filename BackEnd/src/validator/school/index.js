@@ -10,6 +10,7 @@ const {
     updateSchoolSchema
 } = require('./schema');
 
+// Validasi Sekolah
 const SchoolValidator = {
     validateSchoolQuery: (query) => {
         const result = schoolQuerySchema.validate(query);

@@ -11,6 +11,7 @@ const getAllDistricts = asyncHandler(async (req, res) => {
     return responseSuccess(res, result, 'Data kecamatan berhasil diambil');
 });
 
+// Fungsi untuk mengambil detail kecamatan berdasarkan ID, termasuk informasi risiko terkini dan history risiko untuk periode tertentu
 const getDistrictById = asyncHandler(async (req, res) => {
     const { id } = DistrictValidator.validateDistrictId(req.params);
     const district = await DistrictService.getDistrictById(id);
@@ -19,20 +20,24 @@ const getDistrictById = asyncHandler(async (req, res) => {
         return responseError(res, 'Kecamatan tidak ditemukan', 404);
     }
 
+    // Ambil history risiko kecamatan untuk periode 12 bulan terakhir dan tambahkan ke response detail kecamatan
     const riskHistory = await DistrictRiskService.getDistrictRiskHistory(id, 12);
     district.risk_history = riskHistory;
 
     return responseSuccess(res, district, 'Detail kecamatan berhasil diambil');
 });
 
+// Fungsi untuk mengambil history risiko kecamatan berdasarkan ID kecamatan dan limit data history yang diambil
 const getDistrictRiskHistory = asyncHandler(async (req, res) => {
     const { id } = DistrictValidator.validateDistrictId(req.params);
     const { limit = 30 } = req.query;
 
+    // Validasi kecamatan berdasarkan ID untuk memastikan kecamatan yang diminta ada sebelum mengambil history risiko
     const history = await DistrictRiskService.getDistrictRiskHistory(id, limit);
     return responseSuccess(res, history, 'History risiko kecamatan berhasil diambil');
 });
 
+// Fungsi untuk mengambil ranking kecamatan berdasarkan skor risiko, dengan opsi limit jumlah kecamatan yang ditampilkan dan urutan sorting (asc/desc)
 const getDistrictRanking = asyncHandler(async (req, res) => {
     const { limit = 10, sort = 'desc' } = req.query;
     const ranking = await DistrictRiskService.getDistrictRanking();

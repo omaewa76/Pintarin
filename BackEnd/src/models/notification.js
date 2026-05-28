@@ -8,6 +8,7 @@ class NotificationModel extends BaseModel {
     static tableName = 'notifikasi';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil notifikasi berdasarkan ID pengguna dengan dukungan filter untuk hanya mengambil notifikasi yang belum dibaca, serta pagination untuk mengelola jumlah data yang diambil dalam satu permintaan, dan juga menyertakan nama lengkap pengguna yang terkait dengan setiap notifikasi
     static async findByUserId(userId, options = {}) {
         const { onlyUnread = false, page = 1, limit = 20 } = options;
         const offset = (page - 1) * limit;
@@ -50,6 +51,7 @@ class NotificationModel extends BaseModel {
         };
     }
 
+    // Fungsi untuk menandai notifikasi sebagai sudah dibaca berdasarkan ID notifikasi dan ID pengguna, dengan memastikan bahwa hanya notifikasi yang terkait dengan pengguna tersebut yang dapat diubah statusnya, serta mengembalikan data notifikasi yang telah diperbarui jika berhasil
     static async markAsRead(id, userId) {
         const result = await query(
             `UPDATE ${this.tableName} SET sudah_dibaca = true WHERE id = $1 AND pengguna_id = $2 RETURNING *`,

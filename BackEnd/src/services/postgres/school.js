@@ -4,6 +4,7 @@ const { SchoolModel, DistrictModel } = require('../../models');
 const { mapSchoolDBToModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 
+// Service untuk manajemen data sekolah, termasuk pengambilan daftar sekolah dengan filter dan pagination, pengambilan detail sekolah berdasarkan ID, pembaruan data sekolah, verifikasi sekolah, dan pengambilan statistik sekolah berdasarkan berbagai kriteria seperti jumlah siswa, kondisi bangunan, dan tingkat risiko.
 class SchoolService {
     static async getAllSchools(filters) {
         const result = await SchoolModel.findAllWithDistrict(filters);
@@ -13,6 +14,7 @@ class SchoolService {
         };
     }
 
+    // Fungsi untuk mengambil detail sekolah berdasarkan ID, termasuk informasi risiko terkini dan history risiko untuk periode tertentu, hanya bisa diakses oleh sekolah itu sendiri, CSR yang bekerja sama dengan sekolah tersebut, atau admin Dinas
     static async getSchoolById(id) {
         const school = await SchoolModel.findByIdWithRisk(id);
         if (!school) return null;
@@ -31,6 +33,7 @@ class SchoolService {
         return mapSchoolDBToModel(school);
     }
 
+    // Fungsi untuk memperbarui data sekolah, dengan menyimpan perubahan data ke database dan kemudian mengambil detail sekolah tersebut berdasarkan ID setelah pembaruan dilakukan, dengan join ke tabel kecamatan untuk mendapatkan nama kecamatan terkait, serta menyertakan informasi risiko terkini dan history risiko untuk memberikan gambaran lengkap tentang profil sekolah tersebut
     static async updateSchool(id, data) {
         const updateData = {};
         const fieldMapping = {

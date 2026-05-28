@@ -8,6 +8,7 @@ class CSRCompanyModel extends BaseModel {
     static tableName = 'perusahaan_csr';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil detail perusahaan CSR berdasarkan ID pengguna yang terkait, dengan join ke tabel pengguna untuk memastikan hanya perusahaan CSR yang terkait dengan pengguna tersebut yang dapat diakses
     static async findByUserId(userId) {
         const result = await query(
             `SELECT pc.* FROM ${this.tableName} pc
@@ -60,6 +61,7 @@ class CSRCompanyModel extends BaseModel {
         };
     }
 
+    // Fungsi untuk memverifikasi perusahaan CSR, hanya bisa diakses oleh admin Dinas, dan akan mengubah status perusahaan CSR menjadi terverifikasi sehingga bisa mulai bekerja sama dengan sekolah dan muncul di aplikasi CSR untuk dipilih oleh sekolah yang ingin bekerja sama dengan perusahaan CSR tersebut
     static async verify(id) {
         const result = await query(
             `UPDATE ${this.tableName} SET sudah_diverifikasi = true, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *`,

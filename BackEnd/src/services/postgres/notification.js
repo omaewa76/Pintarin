@@ -4,6 +4,7 @@ const { NotificationModel, UserModel } = require('../../models');
 const { mapNotificationDBToModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 
+// Service untuk manajemen notifikasi
 class NotificationService {
     static async getUserNotifications(userId, { onlyUnread = false, page = 1, limit = 20 } = {}) {
         const result = await NotificationModel.findByUserId(userId, { onlyUnread, page, limit });
@@ -18,6 +19,7 @@ class NotificationService {
         return await NotificationModel.getUnreadCount(userId);
     }
 
+    // Fungsi untuk membuat notifikasi baru, dengan menyimpan data notifikasi ke database dan kemudian mengambil detail notifikasi tersebut berdasarkan ID yang baru dibuat, dengan join ke tabel pengguna untuk mendapatkan informasi tambahan seperti nama pengguna, sehingga memberikan gambaran lengkap tentang notifikasi yang telah dibuat
     static async createNotification(data) {
         const { userId, title, message, type, link } = data;
 

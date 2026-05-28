@@ -8,6 +8,7 @@ class SubmissionModel extends BaseModel {
     static tableName = 'pengajuan_perubahan_data';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil detail pengajuan berdasarkan ID, dengan join ke tabel sekolah untuk mendapatkan nama sekolah terkait, serta join ke tabel pengguna untuk mendapatkan nama pengaju dan reviewer, sehingga memberikan gambaran lengkap tentang status pengajuan dan informasi terkait lainnya
     static async findAllWithDetails(options = {}) {
         const { status, schoolId, page = 1, limit = 20 } = options;
         const offset = (page - 1) * limit;
@@ -59,6 +60,7 @@ class SubmissionModel extends BaseModel {
         };
     }
 
+    // Fungsi untuk mengambil detail pengajuan berdasarkan ID, dengan join ke tabel sekolah untuk mendapatkan nama sekolah terkait, serta join ke tabel pengguna untuk mendapatkan nama pengaju dan reviewer, sehingga memberikan gambaran lengkap tentang status pengajuan dan informasi terkait lainnya
     static async approve(id, reviewerId) {
         const result = await query(`
             UPDATE ${this.tableName} 

@@ -13,6 +13,7 @@ class AssistanceRequestService {
         };
     }
 
+    // Fungsi untuk mengambil detail pengajuan bantuan berdasarkan ID, dengan join ke tabel perusahaan CSR, sekolah, dan pengguna untuk mendapatkan nama verifikator, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
     static async getRequestById(id) {
         const requests = await AssistanceRequestModel.findAllWithDetails({});
         const request = requests.data.find(r => r.id === parseInt(id));
@@ -20,6 +21,7 @@ class AssistanceRequestService {
         return mapAssistanceRequestDBToModel(request);
     }
 
+    // Fungsi untuk membuat pengajuan bantuan baru, dengan menyimpan data pengajuan ke database dan kemudian mengambil detail pengajuan tersebut berdasarkan ID yang baru dibuat, dengan join ke tabel perusahaan CSR, sekolah, dan pengguna untuk mendapatkan nama verifikator, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
     static async createRequest(data) {
         const { csrCompanyId, schoolId, type, description, amount } = data;
 
@@ -35,18 +37,21 @@ class AssistanceRequestService {
         return this.getRequestById(newRequest.id);
     }
 
+    // Fungsi untuk mengambil detail pengajuan bantuan berdasarkan ID, dengan join ke tabel perusahaan CSR, sekolah, dan pengguna untuk mendapatkan nama verifikator, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
     static async approveRequest(id, reviewerId) {
         const request = await AssistanceRequestModel.approve(id, reviewerId);
         if (!request) return null;
         return this.getRequestById(id);
     }
 
+    // Fungsi untuk menolak pengajuan bantuan dengan menyimpan alasan penolakan, serta mengambil detail pengajuan bantuan berdasarkan ID setelah penolakan dilakukan, dengan join ke tabel perusahaan CSR, sekolah, dan pengguna untuk mendapatkan nama verifikator, sehingga memberikan gambaran lengkap tentang status pengajuan bantuan yang telah ditolak dan informasi terkait lainnya
     static async rejectRequest(id, reviewerId, rejectionReason) {
         const request = await AssistanceRequestModel.reject(id, reviewerId, rejectionReason);
         if (!request) return null;
         return this.getRequestById(id);
     }
 
+    // Fungsi untuk mengambil statistik pengajuan bantuan, termasuk total jumlah pengajuan, jumlah yang disetujui, jumlah yang masih pending, jumlah yang sudah selesai, serta total nominal bantuan yang diajukan, sehingga dapat memberikan gambaran umum tentang kondisi pengajuan bantuan dalam sistem dan membantu dalam pengambilan keputusan terkait intervensi atau bantuan yang mungkin diperlukan
     static async getAssistanceStatistics() {
         const requests = await AssistanceRequestModel.findAllWithDetails({});
         const data = requests.data;
@@ -60,6 +65,7 @@ class AssistanceRequestService {
         };
     }
 
+    // Fungsi untuk mengambil statistik pengajuan bantuan berdasarkan bulan dalam satu tahun, dengan menghitung total jumlah pengajuan dan total nominal bantuan yang diajukan untuk setiap bulan, sehingga dapat memberikan gambaran tentang tren pengajuan bantuan sepanjang tahun dan membantu dalam perencanaan intervensi atau bantuan yang mungkin diperlukan di masa mendatang
     static async getMonthlySummary(year) {
         const requests = await AssistanceRequestModel.findAllWithDetails({});
         const data = requests.data.filter(r => new Date(r.created_at).getFullYear() === year);

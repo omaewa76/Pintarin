@@ -7,6 +7,7 @@ class BaseModel {
     static tableName = '';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil semua data dengan dukungan filter, pagination, dan pengurutan berdasarkan parameter yang diberikan
     static async findAll(options = {}) {
         const { page = 1, limit = 20, where = {}, orderBy = `${this.primaryKey} DESC` } = options;
         const offset = (page - 1) * limit;
@@ -20,6 +21,7 @@ class BaseModel {
         );
         const total = parseInt(countResult.rows[0].total);
 
+        // Ambil data dengan query yang dibangun berdasarkan filter, pagination, dan pengurutan yang diberikan, serta kembalikan hasil beserta informasi pagination untuk membantu klien dalam mengelola data yang diambil
         const result = await query(
             `SELECT * FROM ${this.tableName} ${whereClause.clause} ORDER BY ${orderBy} LIMIT $${whereClause.values.length + 1} OFFSET $${whereClause.values.length + 2}`,
             params
@@ -36,6 +38,7 @@ class BaseModel {
         };
     }
 
+    // Fungsi untuk mengambil detail data berdasarkan ID, dengan opsi untuk menyertakan relasi atau informasi tambahan jika diperlukan
     static async findById(id) {
         const result = await query(
             `SELECT * FROM ${this.tableName} WHERE ${this.primaryKey} = $1`,
@@ -44,6 +47,7 @@ class BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk mengambil satu data berdasarkan kondisi tertentu, dengan opsi untuk menyertakan relasi atau informasi tambahan jika diperlukan
     static async findOne(where) {
         const whereClause = this.buildWhereClause(where);
         const result = await query(
@@ -53,6 +57,7 @@ class BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk membuat data baru dengan input data yang diberikan, serta mengembalikan data yang baru dibuat beserta informasi tambahan jika diperlukan
     static async create(data) {
         const keys = Object.keys(data);
         const values = Object.values(data);
@@ -66,6 +71,7 @@ class BaseModel {
         return result.rows[0];
     }
 
+    // Fungsi untuk memperbarui data berdasarkan ID dengan input data yang diberikan, serta mengembalikan data yang telah diperbarui beserta informasi tambahan jika diperlukan
     static async updateById(id, data) {
         const keys = Object.keys(data);
         const values = Object.values(data);
@@ -78,6 +84,7 @@ class BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk menghapus data berdasarkan ID, serta mengembalikan informasi apakah penghapusan berhasil atau tidak
     static async deleteById(id) {
         const result = await query(
             `DELETE FROM ${this.tableName} WHERE ${this.primaryKey} = $1 RETURNING ${this.primaryKey}`,
@@ -86,6 +93,7 @@ class BaseModel {
         return result.rows.length > 0;
     }
 
+    // Fungsi untuk membangun klausa WHERE berdasarkan objek kondisi yang diberikan, serta mengembalikan klausa dan nilai parameter yang sesuai untuk digunakan dalam query SQL
     static buildWhereClause(where) {
         const keys = Object.keys(where);
         if (keys.length === 0) {

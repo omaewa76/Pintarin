@@ -7,6 +7,7 @@ const {
     predictionQuerySchema
 } = require('./schema');
 
+// Validasi Prediksi
 const PredictionValidator = {
     validateValidation: (payload) => {
         const result = predictionValidationSchema.validate(payload);

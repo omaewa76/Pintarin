@@ -9,6 +9,7 @@ const {
     rejectSubmissionSchema
 } = require('./schema');
 
+// Validasi Submission
 const SubmissionValidator = {
     validateSubmissionQuery: (query) => {
         const result = submissionQuerySchema.validate(query);

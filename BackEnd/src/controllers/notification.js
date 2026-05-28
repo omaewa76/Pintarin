@@ -17,9 +17,11 @@ const getNotifications = asyncHandler(async (req, res) => {
     return responseSuccess(res, result, 'Data notifikasi berhasil diambil');
 });
 
+// Fungsi untuk menandai notifikasi sebagai dibaca, hanya bisa diakses oleh pemilik notifikasi tersebut
 const markAsRead = asyncHandler(async (req, res) => {
     const { id } = NotificationValidator.validateNotificationId(req.params);
 
+    // Validasi parameter ID untuk menandai notifikasi sebagai dibaca, dan pastikan notifikasi yang diminta ada dan milik pengguna yang sedang login
     const notification = await NotificationService.markAsRead(id, req.user.id);
 
     if (!notification) {
@@ -29,6 +31,7 @@ const markAsRead = asyncHandler(async (req, res) => {
     return responseSuccess(res, notification, 'Notifikasi ditandai sebagai dibaca');
 });
 
+// Fungsi untuk menandai semua notifikasi sebagai dibaca, hanya bisa diakses oleh pemilik notifikasi tersebut
 const markAllAsRead = asyncHandler(async (req, res) => {
     const count = await NotificationService.markAllAsRead(req.user.id);
 
@@ -37,6 +40,7 @@ const markAllAsRead = asyncHandler(async (req, res) => {
     }, `${count} notifikasi ditandai sebagai dibaca`);
 });
 
+// Fungsi untuk menghapus notifikasi, hanya bisa diakses oleh pemilik notifikasi tersebut
 const deleteNotification = asyncHandler(async (req, res) => {
     const { id } = NotificationValidator.validateNotificationId(req.params);
 
@@ -49,6 +53,7 @@ const deleteNotification = asyncHandler(async (req, res) => {
     return responseSuccess(res, null, 'Notifikasi berhasil dihapus');
 });
 
+// Fungsi untuk mengambil jumlah notifikasi yang belum dibaca, hanya bisa diakses oleh pemilik notifikasi tersebut
 const getUnreadCount = asyncHandler(async (req, res) => {
     const count = await NotificationService.getUnreadCount(req.user.id);
 
@@ -57,6 +62,7 @@ const getUnreadCount = asyncHandler(async (req, res) => {
     }, 'Jumlah notifikasi belum dibaca berhasil diambil');
 });
 
+// Fungsi untuk melakukan broadcast notifikasi ke semua pengguna dengan peran tertentu, hanya bisa diakses oleh admin Dinas
 const broadcastNotification = asyncHandler(async (req, res) => {
     if (req.user.role !== 'dinas') {
         return responseError(res, 'Akses ditolak. Hanya admin Dinas yang bisa broadcast.', 403);
@@ -64,6 +70,7 @@ const broadcastNotification = asyncHandler(async (req, res) => {
 
     const validated = NotificationValidator.validateBroadcastNotification(req.body);
 
+    // Validasi data input untuk broadcast notifikasi dan kirim notifikasi ke semua pengguna dengan peran yang ditargetkan
     const notifications = await NotificationService.broadcastNotification(
         validated.role,
         validated.title,
@@ -72,6 +79,7 @@ const broadcastNotification = asyncHandler(async (req, res) => {
         validated.link
     );
 
+    // Simpan notifikasi untuk semua pengguna yang menerima broadcast notifikasi
     return responseSuccess(res, {
         role: validated.role,
         recipient_count: notifications.length,

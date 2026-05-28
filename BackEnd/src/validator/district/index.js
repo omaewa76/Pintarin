@@ -8,6 +8,7 @@ const {
     updateDistrictSchema
 } = require('./schema');
 
+// Validasi District
 const DistrictValidator = {
     validateDistrictQuery: (query) => {
         const result = districtQuerySchema.validate(query);

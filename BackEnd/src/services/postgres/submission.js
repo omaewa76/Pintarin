@@ -4,6 +4,7 @@ const { SubmissionModel, SchoolModel } = require('../../models');
 const { mapSubmissionDBToModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 
+// Service untuk manajemen pengajuan perubahan data sekolah, termasuk pengambilan daftar pengajuan dengan filter dan pagination, pengambilan detail pengajuan berdasarkan ID, pembuatan pengajuan baru, persetujuan dan penolakan pengajuan, serta pengambilan statistik pengajuan berdasarkan statusnya.
 class SubmissionService {
     static async getAllSubmissions(filters) {
         const result = await SubmissionModel.findAllWithDetails(filters);
@@ -13,6 +14,7 @@ class SubmissionService {
         };
     }
 
+    // Fungsi untuk mengambil detail pengajuan berdasarkan ID, hanya bisa diakses oleh sekolah yang membuat pengajuan tersebut atau admin Dinas
     static async getSubmissionById(id) {
         const submissions = await SubmissionModel.findAllWithDetails({});
         const submission = submissions.data.find(s => s.id === parseInt(id));
@@ -20,6 +22,7 @@ class SubmissionService {
         return mapSubmissionDBToModel(submission);
     }
 
+    // Fungsi untuk membuat pengajuan perubahan data sekolah baru, hanya bisa diakses oleh sekolah, dan akan mengirim notifikasi ke admin Dinas untuk melakukan approval/rejection terhadap pengajuan tersebut
     static async createSubmission(data) {
         const { schoolId, submittedBy, updateType, dataAfter, dataBefore } = data;
 
@@ -35,6 +38,7 @@ class SubmissionService {
         return this.getSubmissionById(newSubmission.id);
     }
 
+    // Fungsi untuk mengambil detail pengajuan berdasarkan ID, dengan join ke tabel perusahaan CSR, sekolah, dan pengguna untuk mendapatkan nama verifikator, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
     static async approveSubmission(id, reviewerId) {
         const submission = await SubmissionModel.approve(id, reviewerId);
         if (!submission) return null;
@@ -69,6 +73,7 @@ class SubmissionService {
         return this.getSubmissionById(id);
     }
 
+    // Fungsi untuk menolak pengajuan perubahan data sekolah dengan menyimpan alasan penolakan, serta mengambil detail pengajuan berdasarkan ID setelah penolakan dilakukan, dengan join ke tabel perusahaan CSR, sekolah, dan pengguna untuk mendapatkan nama verifikator, sehingga memberikan gambaran lengkap tentang status pengajuan yang telah ditolak dan informasi terkait lainnya
     static async rejectSubmission(id, reviewerId) {
         const submission = await SubmissionModel.reject(id, reviewerId);
         if (!submission) return null;

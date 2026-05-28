@@ -19,6 +19,7 @@ const getAllSchools = async (req, res) => {
     }
 };
 
+// Fungsi untuk mengambil detail sekolah berdasarkan ID, termasuk informasi risiko terkini dan history risiko untuk periode tertentu, hanya bisa diakses oleh sekolah itu sendiri, CSR yang bekerja sama dengan sekolah tersebut, atau admin Dinas
 const getSchoolById = async (req, res) => {
     try {
         const { id } = SchoolValidator.validateSchoolId(req.params);
@@ -38,6 +39,7 @@ const getSchoolById = async (req, res) => {
     }
 };
 
+// Fungsi untuk memverifikasi sekolah, hanya bisa diakses oleh admin Dinas, dan akan mengubah status sekolah menjadi terverifikasi sehingga bisa mulai menerima pengajuan bantuan CSR dan muncul di aplikasi CSR untuk dipilih oleh perusahaan CSR yang ingin bekerja sama dengan sekolah tersebut
 const verifySchool = async (req, res) => {
     try {
         const { id } = SchoolValidator.validateVerifySchool(req.params);
@@ -57,6 +59,7 @@ const verifySchool = async (req, res) => {
     }
 };
 
+// Fungsi untuk mengambil history risiko sekolah berdasarkan ID sekolah dan limit data history yang diambil, hanya bisa diakses oleh sekolah itu sendiri, CSR yang bekerja sama dengan sekolah tersebut, atau admin Dinas
 const getSchoolRiskHistory = async (req, res) => {
     try {
         const validated = SchoolValidator.validateRiskHistory({ ...req.params, ...req.query });

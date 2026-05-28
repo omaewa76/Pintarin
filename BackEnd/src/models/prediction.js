@@ -8,6 +8,7 @@ class PredictionModel extends BaseModel {
     static tableName = 'skor_risiko_kecamatan';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil prediksi risiko terkini untuk semua kecamatan dengan dukungan pagination untuk mengelola jumlah data yang diambil dalam satu permintaan, serta menyertakan informasi nama kecamatan dan skor risiko terkini
     static async getLatestPredictions(limit = 20) {
         const result = await query(`
             SELECT 
@@ -35,6 +36,7 @@ class PredictionModel extends BaseModel {
         return result.rows;
     }
 
+    // Fungsi untuk mengambil detail prediksi risiko berdasarkan ID, dengan menyertakan informasi nama kecamatan, skor risiko, kategori risiko, tingkat kepercayaan, serta status validasi manusia dan kebutuhan untuk tinjauan lebih lanjut jika diperlukan
     static async findByIdWithDetails(id) {
         const result = await query(`
             SELECT
@@ -57,6 +59,7 @@ class PredictionModel extends BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk menyetujui hasil prediksi risiko berdasarkan ID
     static async approvePrediction(id, validationNote) {
         const result = await query(`
             UPDATE ${this.tableName} SET
@@ -70,6 +73,7 @@ class PredictionModel extends BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk menolak hasil prediksi risiko berdasarkan ID
     static async overridePrediction(id, finalLabel, validationNote) {
         const result = await query(`
             UPDATE ${this.tableName} SET
@@ -83,6 +87,7 @@ class PredictionModel extends BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk menandai hasil prediksi risiko sebagai membutuhkan tinjauan lebih lanjut berdasarkan ID, dengan opsi untuk menambahkan catatan validasi, serta mengubah status kebutuhan untuk tinjauan lebih lanjut sesuai dengan keputusan yang diambil, dan mengembalikan data prediksi yang telah diperbarui jika berhasil
     static async flagForReview(id, validationNote) {
         const result = await query(`
             UPDATE ${this.tableName} SET

@@ -4,6 +4,7 @@ const { PredictionModel, PredictionValidationModel, DistrictModel } = require('.
 const { mapDistrictRiskWithConfidenceDBToModel, mapPredictionValidationDBToModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 
+//  Service untuk manajemen prediksi AI
 class PredictionService {
     static async getPendingReviews() {
         const pendingReviews = await PredictionModel.getPendingReviews();
@@ -16,6 +17,7 @@ class PredictionService {
         return mapDistrictRiskWithConfidenceDBToModel(prediction);
     }
 
+    // Fungsi untuk membuat record validasi prediksi, dengan menyimpan data validasi ke database dan kemudian mengambil detail record validasi tersebut berdasarkan ID yang baru dibuat, dengan join ke tabel pengguna untuk mendapatkan nama petugas yang melakukan validasi, sehingga memberikan gambaran lengkap tentang hasil validasi yang telah dilakukan terhadap prediksi tersebut
     static async createValidationRecord(data) {
         const { predictionId, officerId, action, reason, correctedLabel } = data;
         const record = await PredictionValidationModel.create({
@@ -28,6 +30,7 @@ class PredictionService {
         return mapPredictionValidationDBToModel(record);
     }
 
+    // Fungsi untuk memperbarui prediksi dengan hasil override dari petugas, dengan menyimpan perubahan data ke database dan kemudian mengambil detail prediksi tersebut berdasarkan ID setelah pembaruan dilakukan, dengan join ke tabel kecamatan untuk mendapatkan nama kecamatan terkait, serta menyertakan informasi risiko terkini dan history risiko untuk memberikan gambaran lengkap tentang profil prediksi tersebut setelah dilakukan override oleh petugas
     static async updatePredictionWithOverride(id, data) {
         const { finalLabel, validationNote } = data;
         const prediction = await PredictionModel.overridePrediction(id, finalLabel, validationNote);

@@ -8,6 +8,7 @@ class DistrictModel extends BaseModel {
     static tableName = 'kecamatan';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil semua data kecamatan dengan dukungan filter berdasarkan nama kecamatan, serta pagination untuk mengelola jumlah data yang diambil dalam satu permintaan, dan juga menyertakan skor risiko terkini untuk setiap kecamatan berdasarkan perhitungan terakhir yang tersedia
     static async findAllWithRisk(options = {}) {
         const { page = 1, limit = 20, search } = options;
         const offset = (page - 1) * limit;
@@ -41,6 +42,7 @@ class DistrictModel extends BaseModel {
             params
         );
 
+        // Kembalikan data kecamatan beserta informasi pagination untuk membantu klien dalam mengelola data yang diambil, serta menyertakan skor risiko terkini untuk setiap kecamatan jika tersedia
         return {
             data: result.rows,
             pagination: {
@@ -52,6 +54,7 @@ class DistrictModel extends BaseModel {
         };
     }
 
+    // Fungsi untuk mengambil detail data kecamatan berdasarkan ID, serta menyertakan daftar sekolah yang berada di kecamatan tersebut beserta informasi dasar seperti nama sekolah, NPSN, jenjang, dan status operasional, serta total jumlah sekolah yang ada di kecamatan tersebut untuk memberikan gambaran lengkap tentang kecamatan dan potensi kebutuhan bantuan CSR di wilayah tersebut
     static async findByIdWithSchools(id) {
         const district = await this.findById(id);
         if (!district) return null;

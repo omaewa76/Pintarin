@@ -8,6 +8,7 @@ class AssistanceRequestModel extends BaseModel {
     static tableName = 'pengajuan_bantuan';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil semua pengajuan bantuan dengan detail informasi perusahaan CSR, sekolah, dan verifikator, serta mendukung filter berdasarkan status, sekolah, dan perusahaan CSR, serta pagination untuk mengelola jumlah data yang diambil dalam satu permintaan
     static async findAllWithDetails(options = {}) {
         const { status, schoolId, csrCompanyId, page = 1, limit = 20 } = options;
         const offset = (page - 1) * limit;
@@ -38,6 +39,7 @@ class AssistanceRequestModel extends BaseModel {
 
         params.push(limit, offset);
 
+        // Ambil data pengajuan bantuan dengan join ke tabel perusahaan CSR, sekolah, dan pengguna untuk mendapatkan nama verifikator, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
         const result = await query(`
             SELECT pb.*, 
                 pc.nama_perusahaan, 
@@ -63,6 +65,7 @@ class AssistanceRequestModel extends BaseModel {
         };
     }
 
+    // Fungsi untuk mengambil detail pengajuan bantuan berdasarkan ID, termasuk informasi perusahaan CSR, sekolah, dan verifikator yang terkait dengan pengajuan tersebut
     static async approve(id, reviewerId) {
         const result = await query(`
             UPDATE ${this.tableName} 
@@ -75,6 +78,7 @@ class AssistanceRequestModel extends BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk menolak pengajuan bantuan berdasarkan ID, termasuk menyimpan alasan penolakan dan informasi
     static async reject(id, reviewerId, reason) {
         const result = await query(`
             UPDATE ${this.tableName} 

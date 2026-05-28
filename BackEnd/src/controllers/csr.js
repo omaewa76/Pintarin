@@ -7,6 +7,7 @@ const CSRValidator = require('../validator/csr/index');
 // Controller untuk fitur CSR, termasuk manajemen perusahaan CSR, pengajuan bantuan, dan matching kecamatan untuk program CSR
 const getAllCompanies = async (req, res) => {
     try {
+        // Validasi query parameters untuk filter dan pagination perusahaan CSR
         const validated = CSRValidator.validateCompanyQuery(req.query);
         const result = await CSRCompany.getAllCompanies(validated);
         return responseSuccess(res, result, 'Data perusahaan berhasil diambil');
@@ -19,8 +20,10 @@ const getAllCompanies = async (req, res) => {
     }
 };
 
+// Fungsi untuk mengambil semua pengajuan bantuan, dengan filter berdasarkan peran pengguna (CSR atau sekolah)
 const getAllAssistanceRequests = async (req, res) => {
     try {
+        // Validasi query parameters untuk filter dan pagination pengajuan bantuan
         const validated = CSRValidator.validateAssistanceQuery(req.query);
 
         if (req.user.role === 'csr') {
@@ -30,19 +33,23 @@ const getAllAssistanceRequests = async (req, res) => {
             validated.schoolId = req.user.school_id;
         }
 
+        // Ambil data pengajuan bantuan dari database berdasarkan filter yang divalidasi
         const result = await AssistanceRequest.getAllRequests(validated);
         return responseSuccess(res, result, 'Data pengajuan bantuan berhasil diambil');
     } catch (error) {
         if (error.name === 'InvariantError') {
             return responseError(res, error.message, 400);
         }
+        // Log error untuk debugging dan kembalikan response error generik jika terjadi kesalahan
         console.error('GetAllAssistanceRequests error:', error);
         return responseError(res, 'Terjadi kesalahan');
     }
 };
 
+// Fungsi untuk mengambil detail pengajuan bantuan berdasarkan ID, hanya bisa diakses oleh CSR yang membuat pengajuan atau sekolah yang menerima bantuan
 const getAssistanceRequestById = async (req, res) => {
     try {
+        // Validasi parameter ID untuk mengambil detail pengajuan bantuan
         const { id } = CSRValidator.validateAssistanceId(req.params);
         const request = await AssistanceRequest.getRequestById(id);
 
@@ -60,8 +67,10 @@ const getAssistanceRequestById = async (req, res) => {
     }
 };
 
+// Fungsi untuk membuat pengajuan bantuan baru, hanya bisa diakses oleh pengguna dengan peran CSR
 const createAssistanceRequest = async (req, res) => {
     try {
+        // Validasi data input untuk membuat pengajuan bantuan baru
         const validated = CSRValidator.validateCreateAssistance(req.body);
 
         const company = await CSRCompany.getCompanyByUserId(req.user.id);
@@ -69,11 +78,13 @@ const createAssistanceRequest = async (req, res) => {
             return responseError(res, 'Perusahaan CSR tidak ditemukan', 404);
         }
 
+        // Simpan pengajuan bantuan baru ke database dan buat notifikasi untuk sekolah yang menerima bantuan
         const newRequest = await AssistanceRequest.createRequest({
             csrCompanyId: company.id,
             ...validated
         });
 
+        // Simpan notifikasi untuk sekolah yang menerima bantuan
         await Notification.createNotification({
             userId: newRequest.schoolId,
             title: 'Pengajuan Bantuan Baru',
@@ -92,6 +103,7 @@ const createAssistanceRequest = async (req, res) => {
     }
 };
 
+// Fungsi untuk menyetujui pengajuan bantuan, hanya bisa diakses oleh admin Dinas, dan akan membuat notifikasi untuk CSR yang mengajukan bantuan
 const approveAssistanceRequest = async (req, res) => {
     try {
         const { id } = CSRValidator.validateApproveAssistance(req.params);
@@ -101,6 +113,7 @@ const approveAssistanceRequest = async (req, res) => {
             return responseError(res, 'Pengajuan tidak ditemukan', 404);
         }
 
+        // Simpan notifikasi untuk CSR yang mengajukan bantuan
         await Notification.createNotification({
             userId: request.csrCompanyId,
             title: 'Pengajuan Bantuan Disetujui',
@@ -119,8 +132,10 @@ const approveAssistanceRequest = async (req, res) => {
     }
 };
 
+// Fungsi untuk menolak pengajuan bantuan, hanya bisa diakses oleh admin Dinas, dan akan membuat notifikasi untuk CSR yang mengajukan bantuan dengan alasan penolakan
 const rejectAssistanceRequest = async (req, res) => {
     try {
+        // Validasi parameter ID dan alasan penolakan untuk menolak pengajuan bantuan
         const validated = CSRValidator.validateRejectAssistance(req.params, req.body);
         const request = await AssistanceRequest.rejectRequest(
             validated.id,
@@ -132,6 +147,7 @@ const rejectAssistanceRequest = async (req, res) => {
             return responseError(res, 'Pengajuan tidak ditemukan', 404);
         }
 
+        // Simpan notifikasi untuk CSR yang mengajukan bantuan dengan alasan penolakan
         await Notification.createNotification({
             userId: request.csrCompanyId,
             title: 'Pengajuan Bantuan Ditolak',

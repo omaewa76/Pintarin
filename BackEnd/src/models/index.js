@@ -14,6 +14,7 @@ const PredictionModel = require('./prediction');
 const PredictionValidationModel = require('./predictionValidation');
 const CSRMatchLogModel = require('./csrMatchLog');
 
+// Model untuk menyimpan log hasil pencocokan CSR berdasarkan fokus area dan rentang anggaran
 module.exports = {
     BaseModel,
     UserModel,

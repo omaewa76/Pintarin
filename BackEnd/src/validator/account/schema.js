@@ -2,6 +2,7 @@
 
 const Joi = require('joi');
 
+// Skema validasi untuk operasi pada akun pengguna, termasuk validasi query parameters untuk pengambilan data akun, validasi parameter ID untuk operasi spesifik pada akun tertentu, serta validasi payload untuk pembuatan, pembaruan, penangguhan, dan pengaktifan akun, dengan memastikan bahwa data yang diterima sesuai dengan aturan yang telah ditetapkan dan memberikan gambaran lengkap tentang profil akun yang sedang dikelola
 const accountQuerySchema = Joi.object({
     role: Joi.string().valid('dinas', 'sekolah', 'csr').optional(),
     status: Joi.string().valid('active', 'suspended').optional(),

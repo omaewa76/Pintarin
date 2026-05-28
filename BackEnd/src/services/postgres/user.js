@@ -4,6 +4,7 @@ const { UserModel } = require('../../models');
 const { mapUserDBToModel, mapUserAuthToModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 
+// Service untuk manajemen pengguna, termasuk pengambilan data pengguna berdasarkan email atau ID, pengambilan daftar pengguna dengan filter dan pagination, pembuatan pengguna baru, pembaruan data pengguna, penangguhan dan aktivasi pengguna, penghapusan pengguna, pembaruan kata sandi, serta validasi keberadaan pengguna berdasarkan ID.
 class UserService {
     static async getUserByEmail(email) {
         const user = await UserModel.findByEmail(email);
@@ -17,6 +18,7 @@ class UserService {
         return mapUserDBToModel(user);
     }
 
+    // Fungsi untuk mengambil daftar pengguna berdasarkan peran atau status akun, dengan dukungan pagination untuk mengelola jumlah data yang diambil dalam satu permintaan, serta menyertakan informasi nama lengkap, email, peran, dan tanggal pembuatan akun untuk memberikan gambaran lengkap tentang pengguna yang sesuai dengan filter yang diterapkan
     static async getAllUsers({ role, status, page = 1, limit = 20 } = {}) {
         let users;
         if (role) {
@@ -36,6 +38,7 @@ class UserService {
         };
     }
 
+    // Fungsi untuk mengambil daftar pengguna yang memiliki akun aktif, dengan dukungan pagination untuk mengelola jumlah data yang diambil dalam satu permintaan, serta menyertakan informasi nama lengkap, email, peran, dan tanggal pembuatan akun untuk memberikan gambaran lengkap tentang pengguna yang sedang aktif dalam sistem
     static async createUser(data) {
         const { fullName, email, passwordHash, role, schoolId, csrCompanyId } = data;
 
@@ -52,6 +55,7 @@ class UserService {
         return mapUserDBToModel(newUser);
     }
 
+    // Fungsi untuk memperbarui data pengguna, dengan menyimpan perubahan data ke database dan kemudian mengambil detail pengguna tersebut berdasarkan ID setelah pembaruan dilakukan, dengan join ke tabel sekolah untuk mendapatkan nama sekolah terkait jika pengguna tersebut adalah admin sekolah, serta menyertakan informasi peran dan status akun untuk memberikan gambaran lengkap tentang profil pengguna tersebut
     static async updateUser(id, data) {
         const updateData = {};
         if (data.fullName) updateData.nama_lengkap = data.fullName;

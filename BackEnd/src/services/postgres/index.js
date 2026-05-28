@@ -12,6 +12,7 @@ const NotificationService = require('./notification');
 const PredictionService = require('./prediction');
 const CSRService = require('./csr');
 
+// Index file untuk menggabungkan semua service yang digunakan di berbagai controller, sehingga memudahkan pengelolaan dan impor service di seluruh aplikasi
 module.exports = {
     UserService,
     SchoolService,

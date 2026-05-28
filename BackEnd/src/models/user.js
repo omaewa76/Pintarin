@@ -16,6 +16,7 @@ class UserModel extends BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk mengambil detail pengguna berdasarkan ID, dengan join ke tabel sekolah untuk mendapatkan nama sekolah terkait jika pengguna tersebut adalah admin sekolah, serta menyertakan informasi peran dan status akun untuk memberikan gambaran lengkap tentang profil pengguna tersebut
     static async findByRole(role, options = {}) {
         const { page = 1, limit = 20 } = options;
         const offset = (page - 1) * limit;
@@ -42,6 +43,7 @@ class UserModel extends BaseModel {
         };
     }
 
+    // Fungsi untuk mengambil daftar pengguna yang memiliki akun aktif, dengan dukungan pagination untuk mengelola jumlah data yang diambil dalam satu permintaan, serta menyertakan informasi nama lengkap, email, peran, dan tanggal pembuatan akun untuk memberikan gambaran lengkap tentang pengguna yang sedang aktif dalam sistem
     static async findActiveUsers(options = {}) {
         const { page = 1, limit = 20 } = options;
         const offset = (page - 1) * limit;
@@ -68,6 +70,7 @@ class UserModel extends BaseModel {
         };
     }
 
+    // Fungsi untuk memperbarui kata sandi pengguna berdasarkan ID, dengan memastikan bahwa kata sandi yang disimpan dalam database sudah dalam bentuk hash untuk menjaga keamanan data pengguna, serta mengembalikan nilai boolean yang menunjukkan apakah pembaruan berhasil atau tidak
     static async updatePassword(id, passwordHash) {
         const result = await query(
             `UPDATE ${this.tableName} SET kata_sandi_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id`,

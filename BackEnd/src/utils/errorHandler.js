@@ -1,5 +1,6 @@
 // src/utils/errorHandler.js
 
+// Fungsi untuk menangani error yang tidak tertangani di seluruh aplikasi, dengan mengembalikan response error yang konsisten dan informatif kepada klien, serta mencatat error tersebut untuk keperluan debugging dan pemantauan
 const errorHandler = (err, req, res) => {
     console.error('Unhandled error:', err);
 
@@ -14,6 +15,7 @@ const errorHandler = (err, req, res) => {
     });
 };
 
+// Fungsi untuk mengirim response sukses dengan format yang konsisten, termasuk status code, pesan, data, dan timestamp untuk memberikan informasi yang jelas kepada klien tentang hasil dari permintaan yang dilakukan
 const responseSuccess = (res, data, message = 'Berhasil', statusCode = 200) => {
     return res.status(statusCode).json({
         success: true,

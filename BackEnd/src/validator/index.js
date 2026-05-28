@@ -11,6 +11,7 @@ const NotificationValidator = require('./notification/index.js');
 const AccountValidator = require('./account/index.js');
 const PredictionValidator = require('./predictions/index.js');
 
+// Index file untuk menggabungkan semua validator yang digunakan di berbagai controller, sehingga memudahkan pengelolaan dan impor validator di seluruh aplikasi
 module.exports = {
   AuthValidator,
   SchoolValidator,

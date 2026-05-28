@@ -4,6 +4,7 @@ const { CSRCompanyModel } = require('../../models');
 const { mapCSRCompanyDBToModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 
+// Service untuk manajemen perusahaan CSR, termasuk pengambilan daftar perusahaan dengan filter dan pagination, pengambilan detail perusahaan berdasarkan ID, pembuatan perusahaan baru, pembaruan data perusahaan, verifikasi perusahaan, dan penghapusan perusahaan
 class CSRCompanyService {
     static async getAllCompanies(filters) {
         const result = await CSRCompanyModel.findAllWithFilters(filters);
@@ -13,6 +14,7 @@ class CSRCompanyService {
         };
     }
 
+    // Fungsi untuk mengambil detail perusahaan CSR berdasarkan ID, dengan join ke tabel pengguna untuk mendapatkan informasi tambahan seperti nama kontak, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
     static async getCompanyById(id) {
         const company = await CSRCompanyModel.findById(id);
         if (!company) return null;
@@ -25,6 +27,7 @@ class CSRCompanyService {
         return mapCSRCompanyDBToModel(company);
     }
 
+    // Fungsi untuk membuat perusahaan CSR baru, dengan menyimpan data perusahaan ke database dan kemudian mengambil detail perusahaan tersebut berdasarkan ID yang baru dibuat, dengan join ke tabel pengguna untuk mendapatkan informasi tambahan seperti nama kontak, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
     static async createCompany(data) {
         const { name, industry, contactPerson, contactEmail, contactPhone, address } = data;
 
@@ -41,6 +44,7 @@ class CSRCompanyService {
         return mapCSRCompanyDBToModel(newCompany);
     }
 
+    // Fungsi untuk memperbarui data perusahaan CSR, dengan menyimpan perubahan data ke database dan kemudian mengambil detail perusahaan tersebut berdasarkan ID setelah pembaruan dilakukan, dengan join ke tabel pengguna untuk mendapatkan informasi tambahan seperti nama kontak, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
     static async updateCompany(id, data) {
         const updateData = {};
         if (data.name) updateData.nama_perusahaan = data.name;
@@ -56,6 +60,7 @@ class CSRCompanyService {
         return mapCSRCompanyDBToModel(updatedCompany);
     }
 
+    // Fungsi untuk memverifikasi perusahaan CSR, dengan memperbarui status verifikasi perusahaan di database dan kemudian mengambil detail perusahaan tersebut berdasarkan ID setelah verifikasi dilakukan, dengan join ke tabel pengguna untuk mendapatkan informasi tambahan seperti nama kontak, serta mendukung filter dan pagination sesuai dengan parameter yang diberikan
     static async verifyCompany(id) {
         const company = await CSRCompanyModel.verify(id);
         if (!company) return null;

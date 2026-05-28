@@ -4,6 +4,7 @@ const { DistrictModel } = require('../../models');
 const { mapDistrictDBToModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 
+// Service untuk manajemen data kecamatan, termasuk operasi CRUD dan validasi keberadaan kecamatan berdasarkan ID, dengan fungsi-fungsi yang mengelola data kecamatan serta memberikan gambaran lengkap tentang profil kecamatan yang terkait dengan risiko dan sekolah di dalamnya
 class DistrictService {
     static async getAllDistricts(filters) {
         const result = await DistrictModel.findAllWithRisk(filters);
@@ -29,6 +30,7 @@ class DistrictService {
         return mapDistrictDBToModel(newDistrict);
     }
 
+    // Fungsi untuk memperbarui data kecamatan, dengan menyimpan perubahan data ke database dan kemudian mengambil detail kecamatan tersebut berdasarkan ID setelah pembaruan dilakukan, dengan join ke tabel sekolah untuk mendapatkan nama sekolah terkait jika ada, serta menyertakan informasi luas wilayah dan jumlah penduduk untuk memberikan gambaran lengkap tentang profil kecamatan tersebut
     static async updateDistrict(id, data) {
         const updateData = {};
         if (data.name) updateData.nama_kecamatan = data.name;

@@ -8,6 +8,7 @@ class SchoolModel extends BaseModel {
     static tableName = 'sekolah';
     static primaryKey = 'id';
 
+    // Fungsi untuk mengambil detail sekolah berdasarkan ID, dengan join ke tabel kecamatan untuk mendapatkan nama kecamatan terkait, serta menyertakan informasi skor risiko terkini dan kategori risiko jika tersedia
     static async findAllWithDistrict(options = {}) {
         const {
             page = 1,
@@ -70,6 +71,7 @@ class SchoolModel extends BaseModel {
         };
     }
 
+    // Fungsi untuk mengambil detail sekolah berdasarkan ID, dengan join ke tabel kecamatan untuk mendapatkan nama kecamatan terkait, serta menyertakan informasi skor risiko terkini dan kategori risiko jika tersedia untuk memberikan gambaran lengkap tentang kondisi sekolah tersebut dalam konteks risiko yang mungkin dihadapi, sehingga dapat membantu dalam pengambilan keputusan terkait intervensi atau bantuan yang diperlukan
     static async findByIdWithRisk(id) {
         const result = await query(
             `SELECT s.*, k.nama_kecamatan,
@@ -85,6 +87,7 @@ class SchoolModel extends BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk mengambil detail sekolah berdasarkan ID pengguna yang terkait, dengan join ke tabel kecamatan untuk mendapatkan nama kecamatan terkait, serta menyertakan informasi skor risiko terkini dan kategori risiko jika tersedia untuk memberikan gambaran lengkap tentang kondisi sekolah tersebut dalam konteks risiko yang mungkin dihadapi, sehingga dapat membantu dalam pengambilan keputusan terkait intervensi atau bantuan yang diperlukan, serta memastikan bahwa hanya sekolah yang terkait dengan pengguna tersebut yang dapat diakses
     static async findByUserId(userId) {
         const result = await query(
             `SELECT s.*, k.nama_kecamatan 
@@ -104,6 +107,7 @@ class SchoolModel extends BaseModel {
         return result.rows[0] || null;
     }
 
+    // Fungsi untuk mengambil statistik sekolah secara keseluruhan, dengan menghitung total jumlah sekolah, jumlah sekolah yang masih aktif, jumlah sekolah yang datanya sudah terverifikasi, serta jumlah kecamatan yang memiliki sekolah, sehingga dapat memberikan gambaran umum tentang kondisi sekolah di wilayah tersebut dan potensi kebutuhan bantuan CSR yang mungkin diperlukan
     static async getStatistics() {
         const result = await query(`
             SELECT 

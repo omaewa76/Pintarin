@@ -8,6 +8,7 @@ const {
     trainModelSchema
 } = require('./schema');
 
+// Validator untuk validasi data yang masuk terkait operasi pada fitur AI, termasuk validasi payload untuk prediksi risiko, prediksi batch, pengambilan insights, dan pelatihan model, dengan memastikan bahwa data yang diterima sesuai dengan aturan yang telah ditetapkan dan memberikan gambaran lengkap tentang profil operasi AI yang sedang dikelola
 const AIValidator = {
     validatePredictRisk: (payload) => {
         const result = predictRiskSchema.validate(payload);

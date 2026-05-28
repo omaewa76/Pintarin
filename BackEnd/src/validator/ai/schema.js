@@ -2,6 +2,7 @@
 
 const Joi = require('joi');
 
+// Skema validasi untuk operasi pada fitur AI, termasuk validasi payload untuk prediksi risiko, prediksi batch, pengambilan insights, dan pelatihan model, dengan memastikan bahwa data yang diterima sesuai dengan aturan yang telah ditetapkan dan memberikan gambaran lengkap tentang profil operasi AI yang sedang dikelola
 const predictRiskSchema = Joi.object({
     school_id: Joi.number().integer().positive().required().messages({
         'any.required': 'ID sekolah wajib diisi',

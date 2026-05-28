@@ -25,9 +25,11 @@ const getOverview = asyncHandler(async (req, res) => {
     }, 'Data overview berhasil diambil');
 });
 
+// Fungsi untuk menghitung dan menyimpan risk score untuk semua sekolah atau sekolah tertentu berdasarkan ID
 const getRiskTrend = asyncHandler(async (req, res) => {
     const { months = 6 } = AnalyticsValidator.validateRiskTrend(req.query);
 
+    // Ambil tren risiko rata-rata per bulan untuk periode tertentu
     const trend = await RiskScoreService.getRiskTrend(months);
 
     return responseSuccess(res, {
@@ -42,11 +44,13 @@ const getRiskTrend = asyncHandler(async (req, res) => {
     }, 'Data tren risiko berhasil diambil');
 });
 
+// Fungsi untuk menghitung dan menyimpan risk score untuk semua sekolah atau sekolah tertentu berdasarkan ID
 const getDistrictRanking = asyncHandler(async (req, res) => {
     const { limit = 10, sort = 'desc' } = AnalyticsValidator.validateDistrictRanking(req.query);
 
     const ranking = await DistrictRiskService.getDistrictRanking();
 
+    // Proses data ranking untuk menambahkan informasi status risiko berdasarkan skor
     const processedRanking = ranking.map((item, index) => ({
         rank: sort === 'desc' ? index + 1 : ranking.length - index,
         district_id: item.id,
@@ -55,10 +59,12 @@ const getDistrictRanking = asyncHandler(async (req, res) => {
         status: item.risk_score > 70 ? 'Kritis' : item.risk_score > 40 ? 'Waspada' : 'Aman'
     }));
 
+    // Batasi hasil ranking sesuai dengan parameter limit dan sort
     const limitedRanking = sort === 'desc'
         ? processedRanking.slice(0, limit)
         : processedRanking.slice(-limit).reverse();
 
+    // Simpan notifikasi untuk kecamatan dengan risiko tertinggi
     return responseSuccess(res, {
         ranking: limitedRanking,
         summary: {
@@ -70,6 +76,7 @@ const getDistrictRanking = asyncHandler(async (req, res) => {
     }, 'Ranking kecamatan berhasil diambil');
 });
 
+// Fungsi untuk menghitung dan menyimpan risk score untuk semua sekolah atau sekolah tertentu berdasarkan ID
 const getAssistanceSummary = asyncHandler(async (req, res) => {
     const { year = new Date().getFullYear(), group_by = 'month' } = AnalyticsValidator.validateAssistanceSummary(req.query);
 
@@ -95,13 +102,16 @@ const getAssistanceSummary = asyncHandler(async (req, res) => {
     }, 'Data ringkasan bantuan berhasil diambil');
 });
 
+// Fungsi untuk membandingkan beberapa sekolah berdasarkan skor risiko dan faktor lainnya
 const getSchoolComparison = asyncHandler(async (req, res) => {
     const { school_ids } = AnalyticsValidator.validateSchoolComparison(req.body);
 
+    // Ambil data sekolah dan skor risiko terbaru untuk setiap sekolah yang diminta
     const schools = [];
     for (const id of school_ids) {
         const school = await SchoolService.getSchoolById(id);
         if (school) {
+            // Ambil skor risiko terbaru untuk sekolah ini
             const latestRisk = await RiskScoreService.getLatestRiskScore(id);
             schools.push({
                 id: school.id,
@@ -117,6 +127,7 @@ const getSchoolComparison = asyncHandler(async (req, res) => {
         }
     }
 
+    // Simpan notifikasi untuk sekolah yang dibandingkan
     return responseSuccess(res, {
         comparison: schools,
         summary: {

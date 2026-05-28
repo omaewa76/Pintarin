@@ -11,6 +11,7 @@ const login = async (req, res) => {
     try {
         const { email, password } = AuthValidator.validateLogin(req.body);
 
+        // Cari pengguna berdasarkan email
         const user = await UserService.getUserByEmail(email);
 
         if (!user) {
@@ -28,6 +29,7 @@ const login = async (req, res) => {
 
         const fullUser = await UserService.getUserById(user.id);
 
+        // Generate token akses dan refresh token untuk sesi pengguna
         const { accessToken, refreshToken, expiresIn } = generateTokenPair({
             id: user.id,
             email: user.email,
@@ -36,6 +38,7 @@ const login = async (req, res) => {
             perusahaan_csr_id: fullUser.csrCompanyId
         });
 
+        // Simpan notifikasi untuk pengguna yang baru login
         await NotificationService.createNotification({
             userId: user.id,
             title: 'Login Berhasil',
@@ -44,6 +47,7 @@ const login = async (req, res) => {
             link: '/dashboard'
         });
 
+        // Kembalikan token dan informasi pengguna yang berhasil login
         return responseSuccess(res, {
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -67,8 +71,10 @@ const login = async (req, res) => {
     }
 };
 
+// Fungsi untuk logout pengguna dengan cara mem-blacklist token akses yang digunakan
 const logout = async (req, res) => {
     try {
+        // Ambil token akses dari header Authorization dan masukkan ke blacklist untuk mencegah penggunaan kembali
         const token = req.headers.authorization?.split(' ')[1];
         if (token) {
             blacklistToken(token);
@@ -79,26 +85,29 @@ const logout = async (req, res) => {
     }
 };
 
+// Fungsi untuk memperbarui token akses menggunakan refresh token yang valid
 const refreshToken = async (req, res) => {
     try {
+        // Ambil refresh token dari body permintaan dan validasi untuk menghasilkan token akses baru
         const { refresh_token } = req.body;
 
         if (!refresh_token) {
             return responseError(res, 'Refresh token diperlukan', 400);
         }
 
+        // Validasi dan perbarui token akses menggunakan refresh token yang diberikan
         const { accessToken, expiresIn } = refreshAccessToken(refresh_token);
 
         return responseSuccess(res, {
             access_token: accessToken,
             expires_in: expiresIn
         }, 'Token berhasil diperbarui');
-
     } catch (error) {
         return responseError(res, error.message, 401);
     }
 };
 
+// Fungsi untuk mengambil data pengguna yang sedang login berdasarkan token akses yang valid
 const getMe = async (req, res) => {
     try {
         const user = await UserService.getUserById(req.user.id);
@@ -107,6 +116,7 @@ const getMe = async (req, res) => {
             return responseError(res, 'User tidak ditemukan', 404);
         }
 
+        // Simpan notifikasi untuk pengguna yang mengambil data profil
         return responseSuccess(res, {
             id: user.id,
             name: user.fullName,
